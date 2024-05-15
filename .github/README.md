@@ -40,5 +40,5 @@ Commands:
 
 ```yaml
 # ${STOETZMS_WORK_CONFIG_FILE}
-file: ~/stoetzms/work/work.log
+file: ${STOETZMS_WORK_WORK_FILE}
 ```
