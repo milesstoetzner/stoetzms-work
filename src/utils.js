@@ -20,12 +20,18 @@ function last(list) {
     return list[list.length - 1]
 }
 
+function empty(list) {
+    return list.length === 0
+}
+
 function current(entries) {
     const duration = moment.duration()
 
-    const latest = last(entries)
-    if (latest.type === START) {
-        duration.add(latest.date.diff(moment()))
+    if (!empty(entries)) {
+        const latest = last(entries)
+        if (latest.type === START) {
+            duration.add(latest.date.diff(moment()))
+        }
     }
 
     return humanize(duration.asMilliseconds())
@@ -42,14 +48,17 @@ function today(entries) {
 function ever(entries) {
     const duration = moment.duration()
 
-    for (let index = 0; index + 1 < entries.length; index += 2) {
-        const start = entries[index]
-        const stop = entries[index + 1]
-        duration.add(start.date.diff(stop.date))
-    }
-    const latest = last(entries)
-    if (latest.type === START) {
-        duration.add(latest.date.diff(moment()))
+    if (!empty(entries)) {
+        for (let index = 0; index + 1 < entries.length; index += 2) {
+            const start = entries[index]
+            const stop = entries[index + 1]
+            duration.add(start.date.diff(stop.date))
+        }
+
+        const latest = last(entries)
+        if (latest.type === START) {
+            duration.add(latest.date.diff(moment()))
+        }
     }
 
     return humanize(duration.asMilliseconds())
@@ -74,9 +83,6 @@ function month(entries) {
         .subtract(30, 'days'))
 }
 
-
-
-// TODO: implement second limit
 
 function since(entries, limit) {
     const duration = moment.duration()
@@ -121,4 +127,4 @@ function humanize(ms) {
     return humanizeDuration(ms, {units: ["h", "m", "s"], round: true, largest: 2})
 }
 
-module.exports = {hae, current, week, month, today, ever, last, date, START, STOP}
+module.exports = {hae, current, week, month, today, ever, last, date, empty, START, STOP}

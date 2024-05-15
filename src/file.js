@@ -3,9 +3,14 @@ const moment = require('moment')
 const exec = require('node:child_process').execSync
 const utils = require('./utils')
 
+async function _data(file) {
+    const exists = await fs.access(file).then(() => true).catch(() => false)
+    if (exists) return (await fs.readFile(file)).toString()
+    return ''
+}
+
 async function load(file) {
-    // TODO: touch file
-    const data = (await fs.readFile(file)).toString()
+    const data = await _data(file)
 
     const entries = []
     for (const [index, line] of data.split(/\r?\n/).filter(it => it !== '').entries()) {
@@ -32,7 +37,7 @@ async function log(file, type) {
 }
 
 async function cat(file) {
-    return (await fs.readFile(file)).toString()
+    return _data(file)
 }
 
 function edit(file) {
