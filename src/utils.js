@@ -87,14 +87,22 @@ function month(entries) {
 function since(entries, limit) {
     const duration = moment.duration()
 
+    // Traverse entries in reverse order
     for (let index = entries.length - 1; index >= 0; index--) {
         const start = entries[index]
-        const stop = entries[index + 1]
+        let stop = entries[index + 1]
         if (start.type === STOP) continue
 
+        // Find session before or at limit
         if (start.date.isBefore(limit)) {
-            // TODO: this does not work when working across midnight
-            if (!stop) throw new Error(`Most likely corrupted data since current session is the only session and session started before today ...`)
+            if (!stop) {
+                // If working across midnight
+                stop = {
+                    type: STOP,
+                    date: moment()
+                }
+            }
+
             if (stop.date.isBefore(limit)) break
             duration.add(stop.date
                 .clone()
@@ -106,6 +114,7 @@ function since(entries, limit) {
             break
         }
 
+        // Every session within limit
         if (start.date.isAfter(limit)) {
             if (index === entries.length - 1) {
                 // If still running
