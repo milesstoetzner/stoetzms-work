@@ -45,6 +45,16 @@ function today(entries) {
         .hour(0))
 }
 
+function yesterday(entries) {
+    return since(entries, moment()
+        .millisecond(0)
+        .second(0)
+        .minute(0)
+        .hour(0)
+        .subtract(24, 'hours'))
+}
+
+
 function ever(entries) {
     const duration = moment.duration()
 
@@ -136,4 +146,4 @@ function humanize(ms) {
     return humanizeDuration(ms, {units: ["h", "m", "s"], round: true, largest: 2})
 }
 
-module.exports = {hae, current, week, month, today, ever, last, date, empty, START, STOP}
+module.exports = {hae, current, week, month, today, ever, last, date, empty, yesterday, START, STOP}

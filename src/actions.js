@@ -10,6 +10,7 @@ async function status(options) {
         'ever': utils.ever(entries),
         'month': utils.month(entries),
         'week': utils.week(entries),
+        "24h": utils.yesterday(entries),
         'today': utils.today(entries),
         'current': utils.current(entries)
     }
