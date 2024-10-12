@@ -44,6 +44,14 @@ program.command('cat')
         await actions.cat(options)
     }))
 
+program.command('drop')
+    .description('drop file')
+    .option('--file [string]', '', config.file)
+    .option('--dangerous', '', false)
+    .action(hae(async options => {
+        await actions.drop(options)
+    }))
+
 program.command('date')
     .description('get date')
     .option('--file [string]', '', config.file)

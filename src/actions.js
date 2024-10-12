@@ -42,6 +42,11 @@ async function edit(options) {
     file.edit(options.file)
 }
 
+async function drop(options) {
+    if (!options.dangerous) throw new Error('Dangerous operation ...')
+    await file.drop(options.file)
+}
+
 async function cat(options) {
     console.log(await file.cat(options.file))
 }
@@ -50,4 +55,4 @@ async function date() {
     return console.log(utils.date())
 }
 
-module.exports = {start, stop, status, edit, cat, date}
+module.exports = {start, stop, status, edit, cat, drop, date}

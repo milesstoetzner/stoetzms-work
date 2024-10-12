@@ -24,6 +24,7 @@ Commands:
   stop [options]    stop tracking
   edit [options]    open file in editor
   cat [options]     cat file
+  drop [options]    drop file
   date [options]    get date
   help [command]    display help for command
 ```

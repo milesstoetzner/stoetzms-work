@@ -3,9 +3,12 @@ const moment = require('moment')
 const exec = require('node:child_process').execSync
 const utils = require('./utils')
 
+async function exists(file) {
+    return await fs.access(file).then(() => true).catch(() => false)
+}
+
 async function _data(file) {
-    const exists = await fs.access(file).then(() => true).catch(() => false)
-    if (exists) return (await fs.readFile(file)).toString()
+    if (await exists(file)) return (await fs.readFile(file)).toString()
     return ''
 }
 
@@ -44,4 +47,8 @@ function edit(file) {
     exec('code ' + file)
 }
 
-module.exports = {log, load, cat, edit}
+async function drop(file) {
+    if (await exists(file)) await fs.unlink(file)
+}
+
+module.exports = {log, load, cat, edit, drop}
