@@ -1,5 +1,6 @@
 const moment = require("moment/moment");
 const humanizeDuration = require("humanize-duration");
+const parseDuration = require("parse-duration");
 
 const START = 'start'
 const STOP = 'stop'
@@ -34,24 +35,49 @@ function current(entries) {
         }
     }
 
-    return humanize(duration.asMilliseconds())
+    return humanize(duration)
 }
 
+
 function today(entries) {
-    return since(entries, moment()
+    return humanize(since(entries, moment()
+        .millisecond(0)
+        .second(0)
+        .minute(0)
+        .hour(0)))
+}
+
+function until(entries, goal) {
+    const remaining = moment.duration(parseDuration(goal))
+    const cloned = remaining.clone()
+
+    const done = since(entries, moment()
         .millisecond(0)
         .second(0)
         .minute(0)
         .hour(0))
+
+    // TODO: why is the done duration negative?
+    remaining.add(done)
+
+    if (remaining.asMilliseconds() > 0) {
+        const date = moment()
+        date.add(remaining)
+        return {
+            goal: humanize(cloned),
+            remaining: humanize(remaining),
+            until: date.format()
+        }
+    }
 }
 
 function yesterday(entries) {
-    return since(entries, moment()
+    return humanize(since(entries, moment()
         .millisecond(0)
         .second(0)
         .minute(0)
         .hour(0)
-        .subtract(24, 'hours'))
+        .subtract(24, 'hours')))
 }
 
 
@@ -71,26 +97,26 @@ function ever(entries) {
         }
     }
 
-    return humanize(duration.asMilliseconds())
+    return humanize(duration)
 }
 
 function week(entries) {
-    return since(entries, moment()
+    return humanize(since(entries, moment()
         .millisecond(0)
         .second(0)
         .minute(0)
         .hour(0)
-        .subtract(6, 'days'))
+        .subtract(6, 'days')))
 }
 
 
 function month(entries) {
-    return since(entries, moment()
+    return humanize(since(entries, moment()
         .millisecond(0)
         .second(0)
         .minute(0)
         .hour(0)
-        .subtract(30, 'days'))
+        .subtract(30, 'days')))
 }
 
 
@@ -135,15 +161,15 @@ function since(entries, limit) {
         }
     }
 
-    return humanize(duration.asMilliseconds())
+    return duration
 }
 
 function date() {
     return moment().format()
 }
 
-function humanize(ms) {
-    return humanizeDuration(ms, {units: ["h", "m", "s"], round: true, largest: 2})
+function humanize(duration) {
+    return humanizeDuration(duration.asMilliseconds(), {units: ["h", "m", "s"], round: true, largest: 2})
 }
 
-module.exports = {hae, current, week, month, today, ever, last, date, empty, yesterday, START, STOP}
+module.exports = {hae, current, week, month, today, ever, last, date, empty, yesterday, START, STOP, until}

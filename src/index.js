@@ -30,6 +30,14 @@ program.command('stop')
         await actions.stop(options)
     }))
 
+program.command('until')
+    .description('until goal reached')
+    .option('--file [string]', '', config.file)
+    .option('--goal [string]', '')
+    .action(hae(async options => {
+        await actions.until(options)
+    }))
+
 program.command('edit')
     .description('open file in editor')
     .option('--file [string]', '', config.file)

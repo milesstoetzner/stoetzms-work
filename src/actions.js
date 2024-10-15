@@ -38,6 +38,19 @@ async function stop(options) {
     await file.log(options.file, utils.STOP)
 }
 
+async function until(options) {
+    await status(options)
+
+    const entries = await file.load(options.file)
+    const until = utils.until(entries, options.goal)
+
+    if (until) {
+        console.log(yaml.dump(until))
+    } else {
+        console.log('Already done!')
+    }
+}
+
 async function edit(options) {
     file.edit(options.file)
 }
@@ -55,4 +68,4 @@ async function date() {
     return console.log(utils.date())
 }
 
-module.exports = {start, stop, status, edit, cat, drop, date}
+module.exports = {start, stop, status, edit, cat, drop, date, until}
