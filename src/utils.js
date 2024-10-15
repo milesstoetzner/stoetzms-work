@@ -60,15 +60,18 @@ function until(entries, goal) {
     // TODO: why is the done duration negative?
     remaining.add(done)
 
-    if (remaining.asMilliseconds() > 0) {
-        const date = moment()
-        date.add(remaining)
-        return {
-            goal: humanize(cloned),
-            remaining: humanize(remaining),
-            until: date.format()
-        }
-    }
+   if (remaining.asMilliseconds() > 0) {
+       return {
+           goal: humanize(cloned),
+           remaining: humanize(remaining),
+           until: moment().add(remaining).format()
+       }
+   } else {
+       return {
+           goal: humanize(cloned),
+           remaining:  0,
+       }
+   }
 }
 
 function yesterday(entries) {

@@ -44,11 +44,7 @@ async function until(options) {
     const entries = await file.load(options.file)
     const until = utils.until(entries, options.goal)
 
-    if (until) {
-        console.log(yaml.dump(until))
-    } else {
-        console.log('Already done!')
-    }
+    console.log(yaml.dump(until))
 }
 
 async function edit(options) {
