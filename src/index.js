@@ -34,6 +34,7 @@ program.command('until')
     .description('until goal reached')
     .option('--file [string]', `the working hours file`, config.file)
     .option('--goal [string]', 'the duration to work', '6h')
+    .option('--since [string]', 'the duration since when to achieve the goal (default: today)')
     .action(hae(async options => {
         await actions.until(options)
     }))

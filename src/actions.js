@@ -42,7 +42,7 @@ async function until(options) {
     await status(options)
 
     const entries = await file.load(options.file)
-    const until = utils.until(entries, options.goal)
+    const until = utils.until(entries, {goal: options.goal, since: options.since})
 
     console.log(yaml.dump(until))
 }

@@ -47,31 +47,35 @@ function today(entries) {
         .hour(0)))
 }
 
-function until(entries, goal) {
-    const remaining = moment.duration(parseDuration(goal))
-    const cloned = remaining.clone()
+function until(entries, options) {
+    const remaining = moment.duration(parseDuration(options.goal))
+    const remainingClone = remaining.clone()
 
-    const done = since(entries, moment()
+    const limit = options.since ? moment().subtract(moment.duration(parseDuration(options.since))) : moment()
         .millisecond(0)
         .second(0)
         .minute(0)
-        .hour(0))
+        .hour(0)
+
+    const done = since(entries, limit)
 
     // TODO: why is the done duration negative?
     remaining.add(done)
 
-   if (remaining.asMilliseconds() > 0) {
-       return {
-           goal: humanize(cloned),
-           remaining: humanize(remaining),
-           until: moment().add(remaining).format()
-       }
-   } else {
-       return {
-           goal: humanize(cloned),
-           remaining:  0,
-       }
-   }
+    if (remaining.asMilliseconds() > 0) {
+        return {
+            goal: humanize(remainingClone),
+            remaining: humanize(remaining),
+            until: moment().add(remaining).format(),
+            since: limit.format(),
+        }
+    } else {
+        return {
+            goal: humanize(remainingClone),
+            remaining: 0,
+            since: limit.format(),
+        }
+    }
 }
 
 function yesterday(entries) {
