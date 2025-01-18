@@ -39,7 +39,7 @@ program.command('until')
     }))
 
 program.command('edit')
-    .description('open the working hours file in editor')
+    .description('open the working hours file in VS Code')
     .option('--file [string]', `the working hours file`, config.file)
     .action(hae(async options => {
         await actions.edit(options)
