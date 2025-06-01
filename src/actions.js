@@ -3,7 +3,7 @@ const file = require('./file')
 const utils = require('./utils')
 
 async function status(options) {
-    const entries = await file.load(options.file ?? config.file)
+    const entries = await file.load(options.file)
 
     const details = {
         'date': utils.date(),
