@@ -2,7 +2,7 @@
   "name": "stoetzms-work",
   "version": "0.0.4",
   "bin": {
-    "work": "./build/index.js"
+    "work": "./dist/index.js"
   },
   "pkg": {
     "targets": [
@@ -27,8 +27,11 @@
   },
   "scripts": {
     "work": "tsx src/index.ts",
-    "build": "pkgroll  --clean-dist --minify",
-    "package": "pkg --config package.json dist/index.js"
+    "dist:build": "pkgroll --env.STOETZMS_WORK_COMMIT=$(git rev-parse HEAD) --env.STOETZMS_WORK_VERSION=$(jq '.version' package.json --raw-output) --clean-dist --minify && mv dist/index.js dist/stoetzms-work.js",
+    "dist:package": "pkg --config package.json dist/stoetzms-work.js",
+    "dist:compress": "cd dist && for BINARY in stoetzms-*; do tar -cJf ${BINARY}.xz ${BINARY}; done",
+    "licence:generate": "license-checker --production > dist/licences.txt",
+    "licence:check": "license-checker --production --summary --onlyAllow \"MIT;Apache-2.0;Python-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC-BY-3.0;CC0-1.0;PSF;0BSD;BlueOak-1.0.0;Public Domain;Unlicense\""
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
@@ -37,6 +40,7 @@
     "@types/lodash": "^4.17.17",
     "@types/node": "^22.15.30",
     "@yao-pkg/pkg": "^6.5.1",
+    "license-checker": "^25.0.1",
     "pkgroll": "^2.12.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"

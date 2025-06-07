@@ -7,7 +7,9 @@ import config from './config'
 
 const program = new Command()
 
-program.name('work').description('A simple utility for tracking working hours.')
+program.name('work')
+    .description('A simple utility for tracking working hours.')
+    .version(config.version)
 
 program.command('status')
     .description('get the current working status')
