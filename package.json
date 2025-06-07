@@ -2,7 +2,16 @@
   "name": "stoetzms-work",
   "version": "0.0.4",
   "bin": {
-    "work": "./dist/index.js"
+    "work": "./build/index.js"
+  },
+  "pkg": {
+    "targets": [
+      "node22-linux-x64",
+      "node22-linux-arm64",
+      "node22-win-x64",
+      "node22-win-arm64"
+    ],
+    "outputPath": "dist"
   },
   "repository": "https://github.com/milesstoetzner/stoetzms-work",
   "homepage": "https://work.stoetz.ms",
@@ -18,7 +27,8 @@
   },
   "scripts": {
     "work": "tsx src/index.ts",
-    "build": "pkgroll  --clean-dist --minify"
+    "build": "pkgroll  --clean-dist --minify",
+    "package": "pkg --config package.json dist/index.js"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
@@ -26,6 +36,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.17",
     "@types/node": "^22.15.30",
+    "@yao-pkg/pkg": "^6.5.1",
     "pkgroll": "^2.12.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
