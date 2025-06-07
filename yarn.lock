@@ -1181,10 +1181,10 @@ p-is-promise@^3.0.0:
   resolved "https://registry.yarnpkg.com/p-is-promise/-/p-is-promise-3.0.0.tgz#58e78c7dfe2e163cf2a04ff869e7c1dba64a5971"
   integrity sha512-Wo8VsW4IRQSKVXsJCn7TomUaVtyfjVDn3nUP7kE967BQk0CwFpdbZs0X0uk5sW9mkBa9eNM7hCMaG93WUAwxYQ==
 
-parse-duration@^1.1.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/parse-duration/-/parse-duration-1.1.2.tgz#20008e6c507814761864669bb936e3f4a9a80758"
-  integrity sha512-p8EIONG8L0u7f8GFgfVlL4n8rnChTt8O5FSxgxMz2tjc9FMP199wxVKVB6IbKx11uTbKHACSvaLVIKNnoeNR/A==
+parse-duration@2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/parse-duration/-/parse-duration-2.1.3.tgz#79a61a3ae224a5f4d1b71a8fa79e53d5aa90c902"
+  integrity sha512-MtbharL7Bets65qDBXuDOHHWyY1BxTJZmJ/xGmS90iEbKE0gZ6yZpZtCda7O79GeOi/f0NwBaplIuReExIoVsw==
 
 path-is-absolute@^1.0.0:
   version "1.0.1"
