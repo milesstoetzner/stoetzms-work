@@ -11,7 +11,10 @@ export type Entry = {
 }
 
 export async function exists(file: string) {
-    return await fs.access(file).then(() => true).catch(() => false)
+    return await fs
+        .access(file)
+        .then(() => true)
+        .catch(() => false)
 }
 
 export async function raw(file: string) {
@@ -23,7 +26,10 @@ export async function load(file: string) {
     const data = await raw(file)
 
     const entries = []
-    for (const [index, line] of data.split(/\r?\n/).filter(it => it !== '').entries()) {
+    for (const [index, line] of data
+        .split(/\r?\n/)
+        .filter(it => it !== '')
+        .entries()) {
         const tmp = line.split(' ')
 
         if (index % 2 === 0) {
@@ -35,7 +41,8 @@ export async function load(file: string) {
         }
 
         entries.push({
-            type: tmp[0], date: moment(tmp[1])
+            type: tmp[0],
+            date: moment(tmp[1]),
         })
     }
 

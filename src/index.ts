@@ -7,67 +7,89 @@ import config from './config'
 
 const program = new Command()
 
-program.name('work')
-    .description('A simple utility for tracking working hours.')
-    .version(config.version)
+program.name('work').description('A simple utility for tracking working hours.').version(config.version)
 
-program.command('status')
+program
+    .command('status')
     .description('get the current working status')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.status(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.status(options)
+        })
+    )
 
-program.command('start')
+program
+    .command('start')
     .description('start tracking')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.start(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.start(options)
+        })
+    )
 
-program.command('stop')
+program
+    .command('stop')
     .description('stop tracking')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.stop(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.stop(options)
+        })
+    )
 
-program.command('until')
+program
+    .command('until')
     .description('until goal reached')
     .option('--file [string]', `the working hours file`, config.file)
     .option('--goal [string]', 'the duration to work', '6h')
     .option('--since [string]', 'the duration since when to achieve the goal (default: today)')
-    .action(hae(async options => {
-        await actions.until(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.until(options)
+        })
+    )
 
-program.command('edit')
+program
+    .command('edit')
     .description('open the working hours file in VS Code')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.edit(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.edit(options)
+        })
+    )
 
-program.command('cat')
+program
+    .command('cat')
     .description('cat the working hours file')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.cat(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.cat(options)
+        })
+    )
 
-program.command('drop')
+program
+    .command('drop')
     .description('drop the working hours file')
     .option('--file [string]', `the working hours file`, config.file)
     .requiredOption('--dangerous', '', false)
-    .action(hae(async options => {
-        await actions.drop(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.drop(options)
+        })
+    )
 
-program.command('date')
+program
+    .command('date')
     .description('get current date')
     .option('--file [string]', `the working hours file`, config.file)
-    .action(hae(async options => {
-        await actions.date(options)
-    }))
+    .action(
+        hae(async options => {
+            await actions.date(options)
+        })
+    )
 
 program.parse()

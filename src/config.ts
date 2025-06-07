@@ -12,4 +12,4 @@ const VERSION = `${process.env.STOETZMS_WORK_COMMIT ?? 'LOCAL'} (${process.env.S
 let config = fs.existsSync(CONFIG_FILE) ? yaml.load(fs.readFileSync(CONFIG_FILE, 'utf8')) : {}
 config = lodash.merge({file: WORK_FILE, version: VERSION}, config)
 
-export default config as { file: string, version: string }
+export default config as {file: string; version: string}

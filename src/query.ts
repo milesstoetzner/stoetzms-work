@@ -1,7 +1,7 @@
-import moment from "moment"
-import * as utils from "./utils"
-import * as repository from "./repository"
-import parseDuration from "parse-duration"
+import moment from 'moment'
+import * as utils from './utils'
+import * as repository from './repository'
+import parseDuration from 'parse-duration'
 
 export function current(entries: repository.Entry[]) {
     const duration = moment.duration()
@@ -16,15 +16,9 @@ export function current(entries: repository.Entry[]) {
     return utils.humanize(duration)
 }
 
-
 export function today(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment()
-        .millisecond(0)
-        .second(0)
-        .minute(0)
-        .hour(0)))
+    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0)))
 }
-
 
 export type UntilOptions = {
     goal: string
@@ -35,11 +29,9 @@ export function until(entries: repository.Entry[], options: UntilOptions) {
     const remaining = moment.duration(parseDuration(options.goal))
     const remainingClone = remaining.clone()
 
-    const limit = options.since ? moment().subtract(moment.duration(parseDuration(options.since))) : moment()
-        .millisecond(0)
-        .second(0)
-        .minute(0)
-        .hour(0)
+    const limit = options.since
+        ? moment().subtract(moment.duration(parseDuration(options.since)))
+        : moment().millisecond(0).second(0).minute(0).hour(0)
 
     const done = since(entries, limit)
 
@@ -63,14 +55,8 @@ export function until(entries: repository.Entry[], options: UntilOptions) {
 }
 
 export function yesterday(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment()
-        .millisecond(0)
-        .second(0)
-        .minute(0)
-        .hour(0)
-        .subtract(24, 'hours')))
+    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(24, 'hours')))
 }
-
 
 export function ever(entries: repository.Entry[]) {
     const duration = moment.duration()
@@ -92,24 +78,12 @@ export function ever(entries: repository.Entry[]) {
 }
 
 export function week(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment()
-        .millisecond(0)
-        .second(0)
-        .minute(0)
-        .hour(0)
-        .subtract(6, 'days')))
+    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(6, 'days')))
 }
-
 
 export function month(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment()
-        .millisecond(0)
-        .second(0)
-        .minute(0)
-        .hour(0)
-        .subtract(30, 'days')))
+    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(30, 'days')))
 }
-
 
 export function since(entries: repository.Entry[], limit: moment.Moment) {
     const duration = moment.duration()
@@ -126,18 +100,12 @@ export function since(entries: repository.Entry[], limit: moment.Moment) {
                 // If working across midnight
                 stop = {
                     type: repository.STOP,
-                    date: moment()
+                    date: moment(),
                 }
             }
 
             if (stop.date.isBefore(limit)) break
-            duration.add(stop.date
-                .clone()
-                .millisecond(0)
-                .second(0)
-                .minute(0)
-                .hour(0)
-                .diff(stop.date))
+            duration.add(stop.date.clone().millisecond(0).second(0).minute(0).hour(0).diff(stop.date))
             break
         }
 

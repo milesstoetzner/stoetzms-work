@@ -13,13 +13,13 @@ export async function status(options: StatusOptions) {
     const entries = await repository.load(options.file)
 
     const details = {
-        'date': utils.date(),
-        'ever': query.ever(entries),
-        'month': query.month(entries),
-        'week': query.week(entries),
+        date: utils.date(),
+        ever: query.ever(entries),
+        month: query.month(entries),
+        week: query.week(entries),
         '24h': query.yesterday(entries),
-        'today': query.today(entries),
-        'current': query.current(entries)
+        today: query.today(entries),
+        current: query.current(entries),
     }
 
     console.log(yaml.dump(details))
@@ -58,9 +58,9 @@ export async function until(options: UntilOptions) {
     await status(options)
 
     const entries = await repository.load(options.file)
-    const until = query.until(entries, {goal: options.goal, since: options.since})
+    const result = query.until(entries, {goal: options.goal, since: options.since})
 
-    console.log(yaml.dump(until))
+    console.log(yaml.dump(result))
 }
 
 export type EditOptions = {} & GenericOptions

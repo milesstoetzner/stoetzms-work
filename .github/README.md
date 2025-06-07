@@ -32,8 +32,8 @@ Commands:
 
 ## Environment
 
-| Environment Variable        | Description | Default                                 | 
-|-----------------------------|-------------|-----------------------------------------| 
+| Environment Variable        | Description | Default                                 |
+| --------------------------- | ----------- | --------------------------------------- |
 | `STOETZMS_WORK_BASE_DIR`    |             | `~/stoetzms/work`                       |
 | `STOETZMS_WORK_CONFIG_FILE` |             | `${STOETZMS_WORK_BASE_DIR}/config.yaml` |
 | `STOETZMS_WORK_WORK_FILE`   |             | `${STOETZMS_WORK_BASE_DIR}/work.log`    |
