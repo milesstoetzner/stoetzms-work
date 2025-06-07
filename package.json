@@ -1,8 +1,8 @@
 {
   "name": "stoetzms-work",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "bin": {
-    "work": "./src/index.js"
+    "work": "./dist/index.js"
   },
   "repository": "https://github.com/milesstoetzner/stoetzms-work",
   "homepage": "https://work.stoetz.ms",
@@ -17,6 +17,15 @@
     "parse-duration": "^1.1.0"
   },
   "scripts": {
-    "work": "node src/index.js"
+    "work": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/humanize-duration": "^3.27.4",
+    "@types/js-yaml": "^4.0.9",
+    "@types/lodash": "^4.17.17",
+    "@types/node": "^22.15.30",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   }
 }

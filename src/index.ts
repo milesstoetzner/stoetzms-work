@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const {Command} = require('commander')
-const actions = require('./actions')
-const {hae} = require("./utils");
-const config = require('./config')
+import {Command} from 'commander'
+import * as actions from './actions'
+import {hae} from './utils'
+import config from './config'
 
 const program = new Command()
 
@@ -56,7 +56,7 @@ program.command('cat')
 program.command('drop')
     .description('drop the working hours file')
     .option('--file [string]', `the working hours file`, config.file)
-    .option('--dangerous', '', false)
+    .requiredOption('--dangerous', '', false)
     .action(hae(async options => {
         await actions.drop(options)
     }))
