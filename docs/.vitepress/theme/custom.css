@@ -1,0 +1,14 @@
+.VPHero .image-src {
+    max-width: 480px;
+}
+
+:root {
+    --vp-c-brand-1: #ff6e42;
+    --vp-c-brand-2: #ff6e42;
+    --vp-c-brand-3: #000000;
+    --vp-c-brand-4: #131211;
+
+    --vp-c-text-1: #000000;
+    --vp-c-text-2: #67676c;
+    --vp-c-text-3: #929295;
+}

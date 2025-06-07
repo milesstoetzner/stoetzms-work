@@ -1,6 +1,11 @@
+# IDE
 .idea
 .vscode
 
+# typescript
 dist
-
 node_modules
+
+# vitepress
+docs/.vitepress/dist
+docs/.vitepress/cache
