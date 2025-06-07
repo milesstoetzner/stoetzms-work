@@ -27,3 +27,18 @@ Commands:
   date [options]    get date
   help [command]    display help for command
 ```
+
+## Environment
+
+| Environment Variable        | Description | Default                                 |
+| --------------------------- | ----------- | --------------------------------------- |
+| `STOETZMS_WORK_BASE_DIR`    |             | `~/stoetzms/work`                       |
+| `STOETZMS_WORK_CONFIG_FILE` |             | `${STOETZMS_WORK_BASE_DIR}/config.yaml` |
+| `STOETZMS_WORK_WORK_FILE`   |             | `${STOETZMS_WORK_BASE_DIR}/work.log`    |
+
+## Configuration
+
+```yaml
+# ${STOETZMS_WORK_CONFIG_FILE}
+file: ${STOETZMS_WORK_WORK_FILE}
+```

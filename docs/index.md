@@ -18,13 +18,13 @@ hero:
 features:
 - icon: 🕒
   title: Simple Time Logging
-  details: Log your start and end times with a single command. No distractions, no UI bloat — just pure CLI joy.
+  details: Start and stop tracking with a single command. No menus, no mouse, just the terminal.
 
-- icon: 📊
-  title: Instant Summaries
-  details: Generate daily, weekly, or monthly summaries right from your terminal. Perfect for reporting or invoicing.
+- icon: 🔒
+  title: No Account, No Sync, No Fuss
+  details: No cloud, no login, no tracking. Your time logs stay local and private.
 
-- icon: ⚡
-  title: Fast & Lightweight
-  details: No installs beyond the binary. Cross-platform, minimal dependencies, and runs like lightning on any system.
+- icon: ⏳
+  title: Track and Toss
+  details: Log your hours for the day, week, or month — then delete them guilt-free. No long-term commitment, no clutter.
 ---
