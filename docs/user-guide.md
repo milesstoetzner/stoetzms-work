@@ -33,10 +33,3 @@ Commands:
 | Option     | Description | Default               |
 | ---------- | ----------- | --------------------- |
 | `--config` |             | `~/stoetzms-work.log` |
-
-## Configuration
-
-```yaml
-# ${STOETZMS_WORK_CONFIG_FILE}
-file: ${STOETZMS_WORK_WORK_FILE}
-```
