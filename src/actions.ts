@@ -86,23 +86,18 @@ export async function focus(options: FocusOptions) {
 
     const goalDuration = moment.duration(utils.numerize(options.goal))
     const untilTime = moment().add(goalDuration)
-    const startTime = moment()
 
-    console.log(
+    process.stdout.write(
         yaml.dump({
             goal: utils.humanize(goalDuration),
             until: untilTime.format(),
         })
     )
 
-    // TODO: output looks strange
-
-    // TODO: counting is way too fast
     let condition = true
     while (condition) {
         const nowTime = moment()
-        const passedMilliseconds = nowTime - startTime
-        const remainingDuration = goalDuration.subtract(passedMilliseconds, 'milliseconds')
+        const remainingDuration = moment.duration(untilTime.diff(nowTime))
 
         condition = remainingDuration.asMilliseconds() > 0
 
@@ -112,7 +107,8 @@ export async function focus(options: FocusOptions) {
         }
     }
 
-    process.stdout.write(`\rremaining: 0`)
+    process.stdout.write(`\rremaining: 0\n`)
+    console.log()
 
     await stop(options)
     utils.beep()
