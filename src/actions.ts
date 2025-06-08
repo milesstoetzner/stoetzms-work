@@ -6,12 +6,9 @@ import moment from 'moment'
 
 export type GenericOptions = {
     file: string
-    silent?: boolean
 }
 
 export type StatusOptions = {} & GenericOptions
-
-const SilentOption = {silent: true}
 
 export async function status(options: StatusOptions) {
     const entries = await repository.load(options.file)
@@ -69,7 +66,7 @@ export async function until(options: UntilOptions) {
     const entries = await repository.load(options.file)
     const result = query.until(entries, {goal: options.goal, since: options.since})
 
-    if (!options.silent) console.log(yaml.dump(result))
+    console.log(yaml.dump(result))
 }
 
 export type FocusOptions = {
@@ -132,11 +129,11 @@ export async function drop(options: DropOptions) {
 export type CatOptions = {} & GenericOptions
 
 export async function cat(options: CatOptions) {
-    if (!options.silent) console.log(await repository.raw(options.file))
+    console.log(await repository.raw(options.file))
 }
 
 export type DateOptions = {} & GenericOptions
 
 export async function date(options: DateOptions) {
-    if (!options.silent) console.log(utils.date())
+    console.log(utils.date())
 }
