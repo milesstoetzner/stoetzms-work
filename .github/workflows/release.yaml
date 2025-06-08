@@ -33,9 +33,6 @@ jobs:
             - name: (PREPARE) Install Dependencies
               run: yarn
 
-            - name: (PREPARE) Build Project
-              run: yarn dist:build
-
             ###################################################
             #
             # Test
@@ -49,24 +46,27 @@ jobs:
               run: yarn style:check
 
             - name: (TEST) Check Dependencies
-              run: ./task licenses:check
+              run: yarn licenses:check
 
             ###################################################
             #
-            # Package
+            # Distribution
             #
             ###################################################
 
-            - name: (PACKAGE) Setup Packaging Cache
+            - name: (DIST) Setup Packaging Cache
               uses: actions/cache@v4
               with:
                   path: ~/.pkg-cache
                   key: pkg
 
-            - name: (PACKAGE) Package Binaries
+            - name: (DIST) Build Project
+              run: yarn dist:build
+
+            - name: (DIST) Package Binaries
               run: yarn dist:package
 
-            - name: (PACKAGE) Compress Binaries
+            - name: (DIST) Compress Binaries
               run: yarn dist:compress
 
             ###################################################
@@ -74,6 +74,9 @@ jobs:
             # Release
             #
             ###################################################
+
+            - name: (RELEASE) Delete Latest Release
+              run: yarn licenses:generate
 
             - name: (RELEASE) Delete Latest Release
               run: gh release delete latest --cleanup-tag --yes || true
@@ -106,9 +109,9 @@ jobs:
                   publish_dir: ./docs/.vitepress/dist
 
             - name: (RELEASE) Archive docs
-              run: tar -czvf docs.tar.gz -C docs/site/ .
+              run: tar -czvf docs.tar.gz -C docs/.vitepress/dist .
 
             - name: (RELEASE) Upload docs, profiles, and qualities to release
-              run: gh release upload latest docs.tar.gz docs/docs/sofdcar/tosca-sofdcar-*.yaml docs/docs/normative/tosca-vintner-*.yaml docs/docs/variability4tosca/quality/qualities.yaml
+              run: gh release upload latest docs.tar.gz
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
