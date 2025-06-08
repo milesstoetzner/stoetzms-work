@@ -30,18 +30,9 @@ Commands:
 
 ## Global Options
 
-| Option     | Description | Default           |
-| ---------- | ----------- | ----------------- |
-| `--config` |             | `~/stoetzms/work` |
-| `--silent` |             | `false`           |
-
-## Environment Variables
-
-| Environment Variable        | Description | Default                                 |
-| --------------------------- | ----------- | --------------------------------------- |
-| `STOETZMS_WORK_BASE_DIR`    |             | `~/stoetzms/work`                       |
-| `STOETZMS_WORK_CONFIG_FILE` |             | `${STOETZMS_WORK_BASE_DIR}/config.yaml` |
-| `STOETZMS_WORK_WORK_FILE`   |             | `${STOETZMS_WORK_BASE_DIR}/work.log`    |
+| Option     | Description | Default               |
+| ---------- | ----------- | --------------------- |
+| `--config` |             | `~/stoetzms-work.log` |
 
 ## Configuration
 

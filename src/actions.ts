@@ -6,7 +6,7 @@ import moment from 'moment'
 import {since} from './query'
 
 export type GenericOptions = {
-    file: string
+    file?: string
 }
 
 export type StatusOptions = {} & GenericOptions
@@ -36,7 +36,7 @@ export async function start(options: StartOptions) {
     if (latest && latest.type === repository.START) throw new Error('Already started ...')
 
     await status(options)
-    await repository.add(options.file, repository.START)
+    await repository.add(repository.START, options.file)
 }
 
 export type StopOptions = {strict?: boolean} & GenericOptions
@@ -53,7 +53,7 @@ export async function stop(options: StopOptions) {
     }
 
     await status(options)
-    await repository.add(options.file, repository.STOP)
+    await repository.add(repository.STOP, options.file)
 }
 
 export type UntilOptions = {
