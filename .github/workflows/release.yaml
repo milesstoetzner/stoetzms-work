@@ -36,7 +36,7 @@ jobs:
                   cache: yarn
 
             - name: (PREPARE) Install Dependencies
-              run: yarn
+              run: yarn --frozen-lockfile
 
             ###################################################
             #
