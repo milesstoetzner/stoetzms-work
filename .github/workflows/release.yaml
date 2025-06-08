@@ -46,7 +46,7 @@ jobs:
               run: yarn style:check
 
             - name: (TEST) Check Dependencies
-              run: yarn licenses:check
+              run: yarn license:check
 
             ###################################################
             #
@@ -76,7 +76,7 @@ jobs:
             ###################################################
 
             - name: (RELEASE) Delete Latest Release
-              run: yarn licenses:generate
+              run: yarn license:generate
 
             - name: (RELEASE) Delete Latest Release
               run: gh release delete latest --cleanup-tag --yes || true

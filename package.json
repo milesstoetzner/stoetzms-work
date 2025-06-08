@@ -27,8 +27,8 @@
         "dist:build": "pkgroll --env.STOETZMS_WORK_COMMIT=$(git rev-parse HEAD) --env.STOETZMS_WORK_VERSION=$(jq '.version' package.json --raw-output) --clean-dist --minify && mv dist/index.js dist/stoetzms-work.js",
         "dist:package": "pkg --config package.json dist/stoetzms-work.js",
         "dist:compress": "cd dist && for BINARY in stoetzms-*; do tar -cJf ${BINARY}.xz ${BINARY}; done",
-        "licence:generate": "license-checker --production > dist/licences.txt",
-        "licence:check": "license-checker --production --summary --onlyAllow \"MIT;Apache-2.0;Python-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC-BY-3.0;CC0-1.0;PSF;0BSD;BlueOak-1.0.0;Public Domain;Unlicense\"",
+        "license:generate": "license-checker --production > dist/licences.txt",
+        "license:check": "license-checker --production --summary --onlyAllow \"MIT;Apache-2.0;Python-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC-BY-3.0;CC0-1.0;PSF;0BSD;BlueOak-1.0.0;Public Domain;Unlicense\"",
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
         "docs:preview": "vitepress preview docs"
