@@ -26,5 +26,5 @@ features:
 
     - icon: ⏳
       title: Track and Toss
-      details: Log your hours for the day, week, or month — then delete them guilt-free.
+      details: Log your hours for the day, week, or month; then delete them guilt-free.
 ---
