@@ -102,11 +102,14 @@ jobs:
             #
             ###################################################
 
-            - name: (DOCS) Build and Deploy Docs
+            - name: (RELEASE) Build docs
+              run: yarn docs:build
+
+            - name: (DOCS) Deploy Docs
               uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./docs/.vitepress/dist
+                  publish_dir: docs/.vitepress/dist
 
             - name: (RELEASE) Archive docs
               run: tar -czvf docs.tar.gz -C docs/.vitepress/dist .
