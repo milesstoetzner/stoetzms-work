@@ -2,6 +2,7 @@ import yaml from 'js-yaml'
 import * as repository from './repository'
 import * as utils from './utils'
 import * as query from './query'
+import moment from 'moment'
 
 export type GenericOptions = {
     file: string
@@ -9,6 +10,8 @@ export type GenericOptions = {
 }
 
 export type StatusOptions = {} & GenericOptions
+
+const SilentOption = {silent: true}
 
 export async function status(options: StatusOptions) {
     const entries = await repository.load(options.file)
@@ -38,13 +41,18 @@ export async function start(options: StartOptions) {
     await repository.add(options.file, repository.START)
 }
 
-export type StopOptions = {} & GenericOptions
+export type StopOptions = {strict?: boolean} & GenericOptions
 
 export async function stop(options: StopOptions) {
+    options.strict = options.strict ?? false
+
     const entries = await repository.load(options.file)
 
     const latest = utils.last(entries)
-    if (latest && latest.type === repository.STOP) throw new Error('Already stopped ...')
+    if (latest && latest.type === repository.STOP) {
+        if (options.strict) throw new Error('Already stopped ...')
+        return await status(options)
+    }
 
     await status(options)
     await repository.add(options.file, repository.STOP)
@@ -69,7 +77,45 @@ export type FocusOptions = {
 } & GenericOptions
 
 export async function focus(options: FocusOptions) {
-    // TODO: focus
+    await start(options)
+
+    process.on('SIGINT', async () => {
+        await stop({...options, grace: true})
+        process.exit()
+    })
+
+    const goalDuration = moment.duration(utils.numerize(options.goal))
+    const untilTime = moment().add(goalDuration)
+    const startTime = moment()
+
+    console.log(
+        yaml.dump({
+            goal: utils.humanize(goalDuration),
+            until: untilTime.format(),
+        })
+    )
+
+    // TODO: output looks strange
+
+    // TODO: counting is way too fast
+    let condition = true
+    while (condition) {
+        const nowTime = moment()
+        const passedMilliseconds = nowTime - startTime
+        const remainingDuration = goalDuration.subtract(passedMilliseconds, 'milliseconds')
+
+        condition = remainingDuration.asMilliseconds() > 0
+
+        if (condition) {
+            process.stdout.write(`\rremaining: ${utils.humanize(remainingDuration)}`)
+            await utils.sleep()
+        }
+    }
+
+    process.stdout.write(`\rremaining: 0`)
+
+    await stop(options)
+    utils.beep()
 }
 
 export type EditOptions = {} & GenericOptions

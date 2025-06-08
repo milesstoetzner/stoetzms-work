@@ -28,7 +28,14 @@ Commands:
   help [command]    display help for command
 ```
 
-## Environment
+## Global Options
+
+| Option     | Description | Default           |
+| ---------- | ----------- | ----------------- |
+| `--config` |             | `~/stoetzms/work` |
+| `--silent` |             | `false`           |
+
+## Environment Variables
 
 | Environment Variable        | Description | Default                                 |
 | --------------------------- | ----------- | --------------------------------------- |
