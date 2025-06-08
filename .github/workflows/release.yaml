@@ -12,17 +12,22 @@ jobs:
         name: Release
         runs-on: ubuntu-22.04
         steps:
-            - name: (PREPARE) Free space
-              run: |
-                  sudo rm -rf /usr/share/dotnet
-                  sudo rm -rf /opt/ghc
-                  sudo rm -rf /opt/hostedtoolcache
+            ###################################################
+            #
+            # Prepare
+            #
+            ###################################################
 
             - name: (PREPARE) Checkout Repository
               uses: actions/checkout@v4
               with:
                   lfs: true
                   fetch-depth: 0
+
+            - name: (PREPARE) Setup Git
+              run: |
+                  git config --global user.name "${GITHUB_ACTOR}"
+                  git config --global user.email "${GITHUB_ACTOR}@users.noreply.${GITHUB_DOMAIN:-"github.com"}"
 
             - name: (PREPARE) Setup Node
               uses: actions/setup-node@v3
@@ -97,11 +102,6 @@ jobs:
             #
             ###################################################
 
-            - name: (DOCS) Setup Git
-              run: |
-                  git config --global user.name "${GITHUB_ACTOR}"
-                  git config --global user.email "${GITHUB_ACTOR}@users.noreply.${GITHUB_DOMAIN:-"github.com"}"
-
             - name: (DOCS) Build and Deploy Docs
               uses: peaceiris/actions-gh-pages@v4
               with:
@@ -111,7 +111,7 @@ jobs:
             - name: (RELEASE) Archive docs
               run: tar -czvf docs.tar.gz -C docs/.vitepress/dist .
 
-            - name: (RELEASE) Upload docs, profiles, and qualities to release
+            - name: (RELEASE) Upload docs to release
               run: gh release upload latest docs.tar.gz
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
