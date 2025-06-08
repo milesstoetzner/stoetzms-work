@@ -1,0 +1,114 @@
+name: Release
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+            - fix-release-workflow
+
+concurrency: release
+jobs:
+    release:
+        name: Release
+        runs-on: ubuntu-22.04
+        steps:
+            - name: (PREPARE) Free space
+              run: |
+                  sudo rm -rf /usr/share/dotnet
+                  sudo rm -rf /opt/ghc
+                  sudo rm -rf /opt/hostedtoolcache
+
+            - name: (PREPARE) Checkout Repository
+              uses: actions/checkout@v4
+              with:
+                  lfs: true
+                  fetch-depth: 0
+
+            - name: (PREPARE) Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 22.0.0
+                  cache: yarn
+
+            - name: (PREPARE) Install Dependencies
+              run: yarn
+
+            - name: (PREPARE) Build Project
+              run: yarn dist:build
+
+            ###################################################
+            #
+            # Test
+            #
+            ###################################################
+
+            - name: (TEST) Check ESLint
+              run: yarn lint:check
+
+            - name: (TEST) Check Prettier
+              run: yarn style:check
+
+            - name: (TEST) Check Dependencies
+              run: ./task licenses:check
+
+            ###################################################
+            #
+            # Package
+            #
+            ###################################################
+
+            - name: (PACKAGE) Setup Packaging Cache
+              uses: actions/cache@v4
+              with:
+                  path: ~/.pkg-cache
+                  key: pkg
+
+            - name: (PACKAGE) Package Binaries
+              run: yarn dist:package
+
+            - name: (PACKAGE) Compress Binaries
+              run: yarn dist:compress
+
+            ###################################################
+            #
+            # Release
+            #
+            ###################################################
+
+            - name: (RELEASE) Delete Latest Release
+              run: gh release delete latest --cleanup-tag --yes || true
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: (RELEASE) Delete Latest Tag (Local)
+              run: git tag --delete latest || true
+
+            - name: (RELEASE) Create Latest Release
+              run: gh release create latest --target ${GITHUB_SHA} --latest -t "Latest Release" -n "This is the latest release of this project" ./dist/*
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            ###################################################
+            #
+            # Docs
+            #
+            ###################################################
+
+            - name: (DOCS) Setup Git
+              run: |
+                  git config --global user.name "${GITHUB_ACTOR}"
+                  git config --global user.email "${GITHUB_ACTOR}@users.noreply.${GITHUB_DOMAIN:-"github.com"}"
+
+            - name: (DOCS) Build and Deploy Docs
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./docs/.vitepress/dist
+
+            - name: (RELEASE) Archive docs
+              run: tar -czvf docs.tar.gz -C docs/site/ .
+
+            - name: (RELEASE) Upload docs, profiles, and qualities to release
+              run: gh release upload latest docs.tar.gz docs/docs/sofdcar/tosca-sofdcar-*.yaml docs/docs/normative/tosca-vintner-*.yaml docs/docs/variability4tosca/quality/qualities.yaml
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

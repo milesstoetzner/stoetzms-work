@@ -6,7 +6,7 @@ hero:
   name: "work.stoetz.ms"
   text: "A simple utility for tracking working hours."
   image: 
-    src: hero.png
+    src: /hero.png
   actions:
     - theme: brand
       text: User Guide
