@@ -33,6 +33,7 @@ program
     .command('stop')
     .description('stop tracking')
     .option('--file [string]', `the working hours file`, config.file)
+    .option('--strict [boolean]', `abort if already stopped`)
     .action(
         hae(async options => {
             await actions.stop(options)
@@ -48,6 +49,17 @@ program
     .action(
         hae(async options => {
             await actions.until(options)
+        })
+    )
+
+program
+    .command('focus')
+    .description('focus')
+    .option('--file [string]', `the working hours file`, config.file)
+    .option('--goal [string]', 'the duration to work', '6h')
+    .action(
+        hae(async options => {
+            await actions.focus(options)
         })
     )
 

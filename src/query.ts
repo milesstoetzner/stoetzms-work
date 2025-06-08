@@ -1,7 +1,6 @@
 import moment from 'moment'
 import * as utils from './utils'
 import * as repository from './repository'
-import parseDuration from 'parse-duration'
 
 export function current(entries: repository.Entry[]) {
     const duration = moment.duration()
@@ -25,12 +24,13 @@ export type UntilOptions = {
     since?: string
 }
 
+// TODO: this is not a query?
 export function until(entries: repository.Entry[], options: UntilOptions) {
-    const remaining = moment.duration(parseDuration(options.goal))
+    const remaining = moment.duration(utils.numerize(options.goal))
     const remainingClone = remaining.clone()
 
     const limit = options.since
-        ? moment().subtract(moment.duration(parseDuration(options.since)))
+        ? moment().subtract(moment.duration(utils.numerize(options.since)))
         : moment().millisecond(0).second(0).minute(0).hour(0)
 
     const done = since(entries, limit)

@@ -2,6 +2,7 @@ import yaml from 'js-yaml'
 import * as repository from './repository'
 import * as utils from './utils'
 import * as query from './query'
+import moment from 'moment'
 
 export type GenericOptions = {
     file: string
@@ -22,7 +23,7 @@ export async function status(options: StatusOptions) {
         current: query.current(entries),
     }
 
-    console.log(yaml.dump(details))
+    if (!options.silent) console.log(yaml.dump(details))
 }
 
 export type StartOptions = {} & GenericOptions
@@ -37,13 +38,18 @@ export async function start(options: StartOptions) {
     await repository.add(options.file, repository.START)
 }
 
-export type StopOptions = {} & GenericOptions
+export type StopOptions = {strict?: boolean} & GenericOptions
 
 export async function stop(options: StopOptions) {
+    options.strict = options.strict ?? false
+
     const entries = await repository.load(options.file)
 
     const latest = utils.last(entries)
-    if (latest && latest.type === repository.STOP) throw new Error('Already stopped ...')
+    if (latest && latest.type === repository.STOP) {
+        if (options.strict) throw new Error('Already stopped ...')
+        return await status(options)
+    }
 
     await status(options)
     await repository.add(options.file, repository.STOP)
@@ -61,6 +67,48 @@ export async function until(options: UntilOptions) {
     const result = query.until(entries, {goal: options.goal, since: options.since})
 
     console.log(yaml.dump(result))
+}
+
+export type FocusOptions = {
+    goal: string
+} & GenericOptions
+
+export async function focus(options: FocusOptions) {
+    await start(options)
+
+    process.on('SIGINT', async () => {
+        await stop({...options, grace: true})
+        process.exit()
+    })
+
+    const goalDuration = moment.duration(utils.numerize(options.goal))
+    const untilTime = moment().add(goalDuration)
+
+    process.stdout.write(
+        yaml.dump({
+            goal: utils.humanize(goalDuration),
+            until: untilTime.format(),
+        })
+    )
+
+    let condition = true
+    while (condition) {
+        const nowTime = moment()
+        const remainingDuration = moment.duration(untilTime.diff(nowTime))
+
+        condition = remainingDuration.asMilliseconds() > 0
+
+        if (condition) {
+            process.stdout.write(`\rremaining: ${utils.humanize(remainingDuration)}`)
+            await utils.sleep()
+        }
+    }
+
+    process.stdout.write(`\rremaining: 0\n`)
+    console.log()
+
+    await stop(options)
+    utils.beep()
 }
 
 export type EditOptions = {} & GenericOptions
@@ -87,5 +135,5 @@ export async function cat(options: CatOptions) {
 export type DateOptions = {} & GenericOptions
 
 export async function date(options: DateOptions) {
-    return console.log(utils.date())
+    console.log(utils.date())
 }
