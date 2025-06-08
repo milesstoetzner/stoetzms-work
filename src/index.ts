@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 import {Command} from 'commander'
-import * as actions from './actions'
+import actions from './actions'
 import {hae} from './utils'
 import * as config from './config'
 
 const program = new Command()
 
-program.name('work').description('A simple utility for tracking working hours.').version(config.version)
+program.name('work').description('A simple utility for tracking working hours.').version(config.VERSION)
 
 program
     .command('status')
