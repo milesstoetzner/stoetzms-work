@@ -5,6 +5,7 @@ import * as query from './query'
 
 export type GenericOptions = {
     file: string
+    silent?: boolean
 }
 
 export type StatusOptions = {} & GenericOptions
@@ -22,7 +23,7 @@ export async function status(options: StatusOptions) {
         current: query.current(entries),
     }
 
-    console.log(yaml.dump(details))
+    if (!options.silent) console.log(yaml.dump(details))
 }
 
 export type StartOptions = {} & GenericOptions
@@ -60,7 +61,15 @@ export async function until(options: UntilOptions) {
     const entries = await repository.load(options.file)
     const result = query.until(entries, {goal: options.goal, since: options.since})
 
-    console.log(yaml.dump(result))
+    if (!options.silent) console.log(yaml.dump(result))
+}
+
+export type FocusOptions = {
+    goal: string
+} & GenericOptions
+
+export async function focus(options: FocusOptions) {
+    // TODO: focus
 }
 
 export type EditOptions = {} & GenericOptions
@@ -81,11 +90,11 @@ export async function drop(options: DropOptions) {
 export type CatOptions = {} & GenericOptions
 
 export async function cat(options: CatOptions) {
-    console.log(await repository.raw(options.file))
+    if (!options.silent) console.log(await repository.raw(options.file))
 }
 
 export type DateOptions = {} & GenericOptions
 
 export async function date(options: DateOptions) {
-    return console.log(utils.date())
+    if (!options.silent) console.log(utils.date())
 }
