@@ -3,6 +3,7 @@ import * as repository from './repository'
 import * as utils from './utils'
 import * as query from './query'
 import moment from 'moment'
+import {since} from './query'
 
 export type GenericOptions = {
     file: string
@@ -57,16 +58,42 @@ export async function stop(options: StopOptions) {
 
 export type UntilOptions = {
     goal: string
-    since: string
+    since?: string
 } & GenericOptions
 
 export async function until(options: UntilOptions) {
     await status(options)
 
     const entries = await repository.load(options.file)
-    const result = query.until(entries, {goal: options.goal, since: options.since})
 
-    console.log(yaml.dump(result))
+    const remaining = moment.duration(utils.numerize(options.goal))
+    const remainingClone = remaining.clone()
+
+    const limit = options.since
+        ? moment().subtract(moment.duration(utils.numerize(options.since)))
+        : moment().millisecond(0).second(0).minute(0).hour(0)
+
+    const done = since(entries, limit)
+
+    // TODO: why is the done duration negative?
+    remaining.add(done)
+
+    console.log(
+        yaml.dump(
+            remaining.asMilliseconds() > 0
+                ? {
+                      goal: utils.humanize(remainingClone),
+                      remaining: utils.humanize(remaining),
+                      until: moment().add(remaining).format(),
+                      since: limit.format(),
+                  }
+                : {
+                      goal: utils.humanize(remainingClone),
+                      remaining: 0,
+                      since: limit.format(),
+                  }
+        )
+    )
 }
 
 export type FocusOptions = {

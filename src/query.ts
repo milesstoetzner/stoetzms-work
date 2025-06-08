@@ -19,41 +19,6 @@ export function today(entries: repository.Entry[]) {
     return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0)))
 }
 
-export type UntilOptions = {
-    goal: string
-    since?: string
-}
-
-// TODO: this is not a query?
-export function until(entries: repository.Entry[], options: UntilOptions) {
-    const remaining = moment.duration(utils.numerize(options.goal))
-    const remainingClone = remaining.clone()
-
-    const limit = options.since
-        ? moment().subtract(moment.duration(utils.numerize(options.since)))
-        : moment().millisecond(0).second(0).minute(0).hour(0)
-
-    const done = since(entries, limit)
-
-    // TODO: why is the done duration negative?
-    remaining.add(done)
-
-    if (remaining.asMilliseconds() > 0) {
-        return {
-            goal: utils.humanize(remainingClone),
-            remaining: utils.humanize(remaining),
-            until: moment().add(remaining).format(),
-            since: limit.format(),
-        }
-    } else {
-        return {
-            goal: utils.humanize(remainingClone),
-            remaining: 0,
-            since: limit.format(),
-        }
-    }
-}
-
 export function yesterday(entries: repository.Entry[]) {
     return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(24, 'hours')))
 }
