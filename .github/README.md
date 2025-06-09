@@ -4,7 +4,7 @@ A simple utility for tracking working hours.
 Please refer to our [documentation](https://work.stoetz.ms).
 
 <p align="center">
-    <img src="docs/public/hero.png" alt="hero" width="500"/>
+    <img src="/milesstoetzner/stoetzms-work/raw/docs/.github/docs/public/hero.png" alt="hero" width="500"/>
 </p>
 
 - **Simple Time Logging:** Start and stop tracking with a single command. No menus, no mouse, just the terminal.
