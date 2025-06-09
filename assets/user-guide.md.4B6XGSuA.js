@@ -1,0 +1,19 @@
+import{_ as a,c as n,o as i,ae as e}from"./chunks/framework.BtEkjhVd.js";const u=JSON.parse('{"title":"User Guide","description":"","frontmatter":{},"headers":[],"relativePath":"user-guide.md","filePath":"user-guide.md"}'),p={name:"user-guide.md"};function t(l,s,o,r,h,d){return i(),n("div",null,s[0]||(s[0]=[e(`<h1 id="user-guide" tabindex="-1">User Guide <a class="header-anchor" href="#user-guide" aria-label="Permalink to &quot;User Guide&quot;">​</a></h1><h2 id="installation" tabindex="-1">Installation <a class="header-anchor" href="#installation" aria-label="Permalink to &quot;Installation&quot;">​</a></h2><p>Install the binary on Linux using ...</p><div class="language-shell vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">shell</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">curl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -fsSL</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> https://vintner.opentosca.org/install.sh</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sudo</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bash</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> -</span></span></code></pre></div><p>Install the binary on Windows using ...</p><div class="language-powershell vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">powershell</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">powershell </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Command </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;&amp; {Invoke-WebRequest -Uri &#39;https://vintner.opentosca.org/install.ps1&#39; -UseBasicParsing | Invoke-Expression}&quot;</span></span></code></pre></div><h2 id="usage" tabindex="-1">Usage <a class="header-anchor" href="#usage" aria-label="Permalink to &quot;Usage&quot;">​</a></h2><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>Usage: work [options] [command]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>A simple utility for tracking working hours.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Options:</span></span>
+<span class="line"><span>  -V, --version     output the version number</span></span>
+<span class="line"><span>  -h, --help        display help for command</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Commands:</span></span>
+<span class="line"><span>  status [options]  get the current working status</span></span>
+<span class="line"><span>  start [options]   start tracking</span></span>
+<span class="line"><span>  stop [options]    stop tracking</span></span>
+<span class="line"><span>  until [options]   until goal reached</span></span>
+<span class="line"><span>  focus [options]   focus</span></span>
+<span class="line"><span>  edit [options]    open the working hours file in VS Code</span></span>
+<span class="line"><span>  cat [options]     cat the working hours file</span></span>
+<span class="line"><span>  drop [options]    drop the working hours file</span></span>
+<span class="line"><span>  date [options]    get current date</span></span>
+<span class="line"><span>  help [command]    display help for command</span></span></code></pre></div>`,8)]))}const k=a(p,[["render",t]]);export{u as __pageData,k as default};
