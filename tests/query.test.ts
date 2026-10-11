@@ -107,8 +107,8 @@ describe('yesterday ("24h")', () => {
         expect(query.yesterday(session('2026-10-09T22:00:00+02:00', '2026-10-11T01:00:00+02:00'))).toBe('25 hours')
     })
 
-    // BUG: subtract(24, 'hours') is not a calendar day on the day after a DST switch (2026-10-25 in Europe/Berlin).
-    it.fails('starts at midnight of the previous day after a DST switch', () => {
+    // 2026-10-25 has 25 hours in Europe/Berlin
+    it('starts at midnight of the previous day after a DST switch', () => {
         now('2026-10-26T10:00:00+01:00')
         expect(query.yesterday(session('2026-10-25T00:00:00+02:00', '2026-10-25T00:30:00+02:00'))).toBe('30 minutes')
     })
@@ -123,6 +123,13 @@ describe('week', () => {
             ...session('2026-10-11T08:00:00+02:00', '2026-10-11T09:00:00+02:00'),
         ]
         expect(query.week(entries)).toBe('3 hours')
+    })
+})
+
+describe('week (DST)', () => {
+    it('starts at midnight six calendar days ago across a DST switch', () => {
+        now('2026-10-27T12:00:00+01:00')
+        expect(query.week(session('2026-10-21T00:00:00+02:00', '2026-10-21T00:30:00+02:00'))).toBe('30 minutes')
     })
 })
 

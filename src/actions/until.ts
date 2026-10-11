@@ -20,7 +20,7 @@ export default async function (options: UntilOptions) {
 
     const limit = options.since
         ? moment().subtract(moment.duration(utils.numerize(options.since)))
-        : moment().millisecond(0).second(0).minute(0).hour(0)
+        : moment().startOf('day')
 
     const done = since(entries, limit)
     const remaining = goal.clone().subtract(done)
