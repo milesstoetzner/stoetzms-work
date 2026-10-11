@@ -75,6 +75,28 @@ export async function add(type: string, file?: string, date = moment()) {
     await fs.appendFile(resolve(file), type + ' ' + date.format() + '\n')
 }
 
+/**
+ * Removes the last line, which must be the start of the running session. The file is replaced atomically.
+ */
+export async function cancel(file?: string) {
+    const lines = (await raw(file)).split(/\r?\n/)
+    while (lines.length && lines.at(-1)!.trim() === '') lines.pop()
+    if (
+        !lines.length ||
+        !lines
+            .at(-1)!
+            .trim()
+            .startsWith(START + ' ')
+    )
+        throw new Error('Not started ...')
+    lines.pop()
+
+    const target = resolve(file)
+    const tmp = `${target}.${process.pid}.tmp`
+    await fs.writeFile(tmp, lines.map(it => it + '\n').join(''))
+    await fs.rename(tmp, target)
+}
+
 export function edit(file?: string) {
     const [command, ...args] = config.editor().trim().split(/\s+/)
     // Windows needs a shell to find "code.cmd" and alike

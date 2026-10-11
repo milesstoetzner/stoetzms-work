@@ -119,6 +119,37 @@ describe('stop', () => {
     })
 })
 
+describe('cancel', () => {
+    it('discards the running session', async () => {
+        await write(file, [
+            'start 2026-10-11T08:00:00+02:00',
+            'stop 2026-10-11T09:00:00+02:00',
+            '',
+            'start 2026-10-11T11:00:00+02:00',
+            '',
+        ])
+        expect(await actions.cancel({file})).toMatchObject({today: '1 hour', current: '0 seconds', cancelled: '1 hour'})
+        expect(await read(file)).toBe('start 2026-10-11T08:00:00+02:00\nstop 2026-10-11T09:00:00+02:00\n\n')
+    })
+
+    it('empties a file with only a running session', async () => {
+        await write(file, ['start 2026-10-11T11:00:00+02:00'])
+        await actions.cancel({file})
+        expect(await read(file)).toBe('')
+    })
+
+    it('refuses when stopped', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00', 'stop 2026-10-11T09:00:00+02:00'])
+        await expect(actions.cancel({file})).rejects.toThrow('Not started')
+        expect(await repository.load(file)).toHaveLength(2)
+    })
+
+    it('refuses on an empty file', async () => {
+        await expect(actions.cancel({file})).rejects.toThrow('Not started')
+        expect(await repository.exists(file)).toBe(false)
+    })
+})
+
 describe('status', () => {
     it('reports all aggregates', async () => {
         await write(file, [

@@ -44,6 +44,16 @@ program
     )
 
 program
+    .command('cancel')
+    .description('discard the running session')
+    .option('--file [string]', `the working hours file`)
+    .action(
+        hae(async options => {
+            print(await actions.cancel(options))
+        })
+    )
+
+program
     .command('until')
     .description('until goal reached')
     .option('--file [string]', `the working hours file`)

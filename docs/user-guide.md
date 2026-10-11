@@ -29,6 +29,7 @@ Commands:
   status [options]  get the current working status
   start [options]   start tracking
   stop [options]    stop tracking
+  cancel [options]  discard the running session
   until [options]   until goal reached
   focus [options]   focus
   edit [options]    open the working hours file in an editor
