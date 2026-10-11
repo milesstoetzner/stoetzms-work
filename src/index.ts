@@ -98,7 +98,7 @@ program
     .description('get current date')
     .action(
         hae(async options => {
-            await actions.date()
+            await actions.date(options)
         })
     )
 
