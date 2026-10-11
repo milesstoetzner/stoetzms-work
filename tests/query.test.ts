@@ -85,8 +85,7 @@ describe('today', () => {
         expect(query.today(session('2026-10-10T20:00:00+02:00', '2026-10-10T23:59:00+02:00'))).toBe('0 seconds')
     })
 
-    // BUG: since() only handles start < limit and start > limit, so start === limit is skipped.
-    it.fails('counts a session starting exactly at midnight', () => {
+    it('counts a session starting exactly at midnight', () => {
         now('2026-10-11T10:00:00+02:00')
         expect(query.today(session('2026-10-11T00:00:00+02:00', '2026-10-11T02:00:00+02:00'))).toBe('2 hours')
     })
@@ -103,8 +102,7 @@ describe('yesterday ("24h")', () => {
         expect(query.yesterday(entries)).toBe('3 hours')
     })
 
-    // BUG: the straddling session is clipped at midnight of its stop day, not at the limit.
-    it.fails('counts a session spanning two midnights from the limit on', () => {
+    it('counts a session spanning two midnights from the limit on', () => {
         now('2026-10-11T10:00:00+02:00')
         expect(query.yesterday(session('2026-10-09T22:00:00+02:00', '2026-10-11T01:00:00+02:00'))).toBe('25 hours')
     })
@@ -146,6 +144,17 @@ describe('since', () => {
         expect(hours(query.since([], moment().subtract(8, 'hours')))).toBe(0)
     })
 
+    it('is positive', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(hours(query.since(session('2026-10-11T08:00:00+02:00', '2026-10-11T10:00:00+02:00')))).toBe(2)
+    })
+
+    it('counts a session starting exactly at the limit', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = session('2026-10-11T04:00:00+02:00', '2026-10-11T05:00:00+02:00')
+        expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(1)
+    })
+
     it('counts sessions after a non-midnight limit', () => {
         now('2026-10-11T12:00:00+02:00')
         const entries = [
@@ -156,15 +165,13 @@ describe('since', () => {
         expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(3)
     })
 
-    // BUG: the straddling session is clipped at midnight of its stop day (counts 00:00-05:00 = 5h).
-    it.fails('clips a session straddling a non-midnight limit at the limit', () => {
+    it('clips a session straddling a non-midnight limit at the limit', () => {
         now('2026-10-11T12:00:00+02:00')
         const entries = session('2026-10-11T03:00:00+02:00', '2026-10-11T05:00:00+02:00')
         expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(1)
     })
 
-    // BUG: same root cause, across midnight it counts only 00:00-01:00.
-    it.fails('clips a session straddling a limit before midnight at the limit', () => {
+    it('clips a session straddling a limit before midnight at the limit', () => {
         now('2026-10-11T02:00:00+02:00')
         const entries = session('2026-10-10T17:00:00+02:00', '2026-10-11T01:00:00+02:00')
         expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(7)

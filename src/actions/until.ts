@@ -16,29 +16,26 @@ export default async function (options: UntilOptions) {
 
     const entries = await repository.load(options.file)
 
-    const remaining = moment.duration(utils.numerize(options.goal))
-    const remainingClone = remaining.clone()
+    const goal = moment.duration(utils.numerize(options.goal))
 
     const limit = options.since
         ? moment().subtract(moment.duration(utils.numerize(options.since)))
         : moment().millisecond(0).second(0).minute(0).hour(0)
 
     const done = since(entries, limit)
-
-    // TODO: why is the done duration negative?
-    remaining.add(done)
+    const remaining = goal.clone().subtract(done)
 
     console.log(
         yaml.dump(
             remaining.asMilliseconds() > 0
                 ? {
-                      goal: utils.humanize(remainingClone),
+                      goal: utils.humanize(goal),
                       remaining: utils.humanize(remaining),
                       until: moment().add(remaining).format(),
                       since: limit.format(),
                   }
                 : {
-                      goal: utils.humanize(remainingClone),
+                      goal: utils.humanize(goal),
                       remaining: 0,
                       since: limit.format(),
                   }

@@ -19,9 +19,8 @@ export function now(date: string) {
     vi.setSystemTime(new Date(date))
 }
 
-// Durations returned by query.since() are currently negative; compare magnitudes only.
 export function hours(duration: moment.Duration) {
-    return Math.abs(duration.asHours())
+    return duration.asHours()
 }
 
 export async function tmpdir() {
