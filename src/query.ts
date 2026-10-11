@@ -22,6 +22,18 @@ export function sessions(entries: repository.Entry[]): Session[] {
     return result
 }
 
+export function status(entries: repository.Entry[]) {
+    return {
+        date: utils.date(),
+        ever: ever(entries),
+        month: month(entries),
+        week: week(entries),
+        '24h': yesterday(entries),
+        today: today(entries),
+        current: current(entries),
+    }
+}
+
 export function current(entries: repository.Entry[]) {
     const duration = moment.duration()
 

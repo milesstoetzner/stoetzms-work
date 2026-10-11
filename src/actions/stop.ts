@@ -1,15 +1,19 @@
 import * as repository from '../repository'
 import * as utils from '../utils'
-import actions from './index'
+import * as query from '../query'
 
 export type StopOptions = {file?: string}
 
+/**
+ * Stops tracking and returns the status right before, i.e., including the duration of the stopped session.
+ */
 export default async function (options: StopOptions) {
     const entries = await repository.load(options.file)
 
-    const latest = utils.last(entries)
-    if (!latest || latest.type === repository.STOP) return await actions.status(options)
+    const status = query.status(entries)
 
-    await actions.status(options)
-    await repository.add(repository.STOP, options.file)
+    const latest = utils.last(entries)
+    if (latest && latest.type === repository.START) await repository.add(repository.STOP, options.file)
+
+    return status
 }

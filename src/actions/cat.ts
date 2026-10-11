@@ -5,5 +5,5 @@ export type CatOptions = {
 }
 
 export default async function (options: CatOptions) {
-    console.log(await repository.raw(options.file))
+    return await repository.raw(options.file)
 }

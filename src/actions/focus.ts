@@ -1,48 +1,37 @@
 import moment from 'moment'
 import * as utils from '../utils'
-import yaml from 'js-yaml'
-import actions from './index'
+import start from './start'
+import stop from './stop'
 
 export type FocusOptions = {
     file?: string
     goal: string
 }
 
-export default async function (options: FocusOptions) {
-    const goalDuration = moment.duration(utils.numerize(options.goal))
+export type FocusEvents = {
+    signal?: AbortSignal
+    onStart?: (data: {goal: string; until: string}) => void
+    onTick?: (remaining: moment.Duration) => void
+}
 
-    await actions.start(options)
+/**
+ * Tracks until the goal is reached or the signal is aborted and returns the status right before stopping.
+ */
+export default async function (options: FocusOptions, events: FocusEvents = {}) {
+    const goal = moment.duration(utils.numerize(options.goal))
 
-    process.on('SIGINT', async () => {
-        await actions.stop(options)
-        process.exit()
-    })
+    await start(options)
 
-    const untilTime = moment().add(goalDuration)
+    const until = moment().add(goal)
+    events.onStart?.({goal: utils.humanize(goal), until: until.format()})
 
-    process.stdout.write(
-        yaml.dump({
-            goal: utils.humanize(goalDuration),
-            until: untilTime.format(),
-        })
-    )
+    while (!events.signal?.aborted) {
+        const remaining = moment.duration(until.diff(moment()))
+        if (remaining.asMilliseconds() <= 0) break
 
-    let condition = true
-    while (condition) {
-        const nowTime = moment()
-        const remainingDuration = moment.duration(untilTime.diff(nowTime))
-
-        condition = remainingDuration.asMilliseconds() > 0
-
-        if (condition) {
-            process.stdout.write(`\rremaining: ${utils.humanize(remainingDuration)}`)
-            await utils.sleep()
-        }
+        events.onTick?.(remaining)
+        await utils.sleep(1000, events.signal)
     }
 
-    process.stdout.write(`\rremaining: 0\n`)
-    console.log()
-
-    await actions.stop(options)
-    utils.beep()
+    return await stop(options)
 }

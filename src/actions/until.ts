@@ -1,9 +1,7 @@
 import * as repository from '../repository'
 import moment from 'moment'
 import * as utils from '../utils'
-import {since} from '../query'
-import yaml from 'js-yaml'
-import actions from './index'
+import * as query from '../query'
 
 export type UntilOptions = {
     file?: string
@@ -12,8 +10,6 @@ export type UntilOptions = {
 }
 
 export default async function (options: UntilOptions) {
-    await actions.status(options)
-
     const entries = await repository.load(options.file)
 
     const goal = moment.duration(utils.numerize(options.goal))
@@ -22,23 +18,15 @@ export default async function (options: UntilOptions) {
         ? moment().subtract(moment.duration(utils.numerize(options.since)))
         : moment().startOf('day')
 
-    const done = since(entries, limit)
+    const done = query.since(entries, limit)
     const remaining = goal.clone().subtract(done)
 
-    console.log(
-        yaml.dump(
-            remaining.asMilliseconds() > 0
-                ? {
-                      goal: utils.humanize(goal),
-                      remaining: utils.humanize(remaining),
-                      until: moment().add(remaining).format(),
-                      since: limit.format(),
-                  }
-                : {
-                      goal: utils.humanize(goal),
-                      remaining: 0,
-                      since: limit.format(),
-                  }
-        )
-    )
+    return {
+        ...query.status(entries),
+        goal: utils.humanize(goal),
+        ...(remaining.asMilliseconds() > 0
+            ? {remaining: utils.humanize(remaining), until: moment().add(remaining).format()}
+            : {remaining: 0}),
+        since: limit.format(),
+    }
 }
