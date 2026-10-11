@@ -4,12 +4,15 @@ import parseDuration from 'parse-duration'
 import yaml from 'js-yaml'
 import * as readline from 'node:readline/promises'
 
+/**
+ * Handles errors of an action: prints the message to stderr (with stack trace if DEBUG is set) and exits with 1.
+ */
 export function hae<T>(action: (options: T) => Promise<any>): (options: T) => Promise<void> {
     return async (options: T) => {
         try {
             await action(options)
         } catch (e) {
-            console.log(e)
+            console.error(process.env.DEBUG ? e : `Error: ${e instanceof Error ? e.message : e}`)
             process.exit(1)
         }
     }
