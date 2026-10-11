@@ -2,7 +2,10 @@ import * as path from 'node:path'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import actions from '../src/actions'
 import * as repository from '../src/repository'
+import * as utils from '../src/utils'
 import {now, read, tmpdir, write} from './helpers'
+
+vi.mock('../src/utils', async original => ({...(await original<typeof utils>()), confirm: vi.fn()}))
 
 let file: string
 
@@ -161,9 +164,34 @@ describe('focus', () => {
 })
 
 describe('drop', () => {
-    it('deletes the file', async () => {
+    beforeEach(() => {
+        vi.mocked(utils.confirm).mockReset()
+    })
+
+    it('deletes the file when confirmed', async () => {
+        vi.mocked(utils.confirm).mockResolvedValue(true)
         await write(file, ['start 2026-10-11T08:00:00+02:00'])
         await actions.drop({file})
+        expect(utils.confirm).toHaveBeenCalledWith(`Delete ${file}? [y/N] `)
         expect(await repository.exists(file)).toBe(false)
+    })
+
+    it('keeps the file when not confirmed', async () => {
+        vi.mocked(utils.confirm).mockResolvedValue(false)
+        await write(file, ['start 2026-10-11T08:00:00+02:00'])
+        await expect(actions.drop({file})).rejects.toThrow('Aborted')
+        expect(await repository.exists(file)).toBe(true)
+    })
+
+    it('does not ask with yes', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00'])
+        await actions.drop({file, yes: true})
+        expect(utils.confirm).not.toHaveBeenCalled()
+        expect(await repository.exists(file)).toBe(false)
+    })
+
+    it('does not ask if there is no file', async () => {
+        await actions.drop({file})
+        expect(utils.confirm).not.toHaveBeenCalled()
     })
 })
