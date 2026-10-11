@@ -2,7 +2,8 @@ import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
 import moment from 'moment'
-import {execSync} from 'node:child_process'
+import {spawnSync} from 'node:child_process'
+import * as config from './config'
 
 export const START = 'start'
 export const STOP = 'stop'
@@ -14,27 +15,29 @@ export type Entry = {
 }
 
 /**
- * Expands a leading "~", since only the shell does that and not for "--file=~/...".
+ * Falls back to the config and then to FILE_DEFAULT. Expands a leading "~", since only the shell does that and not for
+ * "--file=~/...".
  */
-export function resolve(file = FILE_DEFAULT) {
+export function resolve(file?: string) {
+    file = file ?? config.load().file ?? FILE_DEFAULT
     if (file === '~') return os.homedir()
     if (file.startsWith('~/') || file.startsWith('~' + path.sep)) return path.join(os.homedir(), file.slice(2))
     return file
 }
 
-export async function exists(file = FILE_DEFAULT) {
+export async function exists(file?: string) {
     return await fs
         .access(resolve(file))
         .then(() => true)
         .catch(() => false)
 }
 
-export async function raw(file = FILE_DEFAULT) {
+export async function raw(file?: string) {
     if (await exists(file)) return (await fs.readFile(resolve(file))).toString()
     return ''
 }
 
-export async function load(file = FILE_DEFAULT) {
+export async function load(file?: string) {
     return parse(await raw(file), resolve(file))
 }
 
@@ -68,14 +71,18 @@ export function parse(data: string, file = FILE_DEFAULT) {
     return entries
 }
 
-export async function add(type: string, file = FILE_DEFAULT) {
+export async function add(type: string, file?: string) {
     await fs.appendFile(resolve(file), type + ' ' + moment().format() + '\n')
 }
 
-export function edit(file = FILE_DEFAULT) {
-    execSync('code ' + resolve(file))
+export function edit(file?: string) {
+    const [command, ...args] = config.editor().trim().split(/\s+/)
+    // Windows needs a shell to find "code.cmd" and alike
+    const result = spawnSync(command, [...args, resolve(file)], {stdio: 'inherit', shell: process.platform === 'win32'})
+    if (result.error) throw result.error
+    if (result.status !== 0) throw new Error(`Editor "${command}" exited with ${result.status}`)
 }
 
-export async function drop(file = FILE_DEFAULT) {
+export async function drop(file?: string) {
     if (await exists(file)) await fs.unlink(resolve(file))
 }

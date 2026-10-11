@@ -4,12 +4,12 @@ import {Command} from 'commander'
 import actions from './actions'
 import * as utils from './utils'
 import {hae, print} from './utils'
-import * as config from './config'
+import * as version from './version'
 import yaml from 'js-yaml'
 
 const program = new Command()
 
-program.name('work').description('A simple utility for tracking working hours.').version(config.VERSION)
+program.name('work').description('A simple utility for tracking working hours.').version(version.VERSION)
 
 program
     .command('status')
@@ -77,7 +77,7 @@ program
 
 program
     .command('edit')
-    .description('open the working hours file in VS Code')
+    .description('open the working hours file in an editor')
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
