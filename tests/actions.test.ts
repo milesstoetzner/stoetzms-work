@@ -119,6 +119,65 @@ describe('stop', () => {
     })
 })
 
+describe('revert', () => {
+    beforeEach(() => {
+        vi.mocked(utils.confirm).mockReset()
+    })
+
+    it('discards the running session when confirmed', async () => {
+        vi.mocked(utils.confirm).mockResolvedValue(true)
+        await write(file, [
+            'start 2026-10-11T08:00:00+02:00',
+            'stop 2026-10-11T09:00:00+02:00',
+            '',
+            'start 2026-10-11T11:00:00+02:00',
+            '',
+        ])
+        expect(await actions.revert({file})).toMatchObject({
+            today: '1 hour',
+            current: '0 seconds',
+            reverted: 'start 2026-10-11T11:00:00+02:00',
+        })
+        expect(utils.confirm).toHaveBeenCalledWith('Delete "start 2026-10-11T11:00:00+02:00"? [y/N] ')
+        expect(await read(file)).toBe('start 2026-10-11T08:00:00+02:00\nstop 2026-10-11T09:00:00+02:00\n\n')
+    })
+
+    it('resumes the session when reverting a stop', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00', 'stop 2026-10-11T09:00:00+02:00'])
+        expect(await actions.revert({file, yes: true})).toMatchObject({
+            today: '4 hours',
+            current: '4 hours',
+            reverted: 'stop 2026-10-11T09:00:00+02:00',
+        })
+        expect(await read(file)).toBe('start 2026-10-11T08:00:00+02:00\n')
+    })
+
+    it('empties a file with a single entry', async () => {
+        await write(file, ['start 2026-10-11T11:00:00+02:00'])
+        await actions.revert({file, yes: true})
+        expect(await read(file)).toBe('')
+    })
+
+    it('keeps the entry when not confirmed', async () => {
+        vi.mocked(utils.confirm).mockResolvedValue(false)
+        await write(file, ['start 2026-10-11T08:00:00+02:00', 'stop 2026-10-11T09:00:00+02:00'])
+        await expect(actions.revert({file})).rejects.toThrow('Aborted')
+        expect(await repository.load(file)).toHaveLength(2)
+    })
+
+    it('does not ask with yes', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00'])
+        await actions.revert({file, yes: true})
+        expect(utils.confirm).not.toHaveBeenCalled()
+    })
+
+    it('refuses on an empty file', async () => {
+        await expect(actions.revert({file})).rejects.toThrow('Nothing to revert')
+        expect(utils.confirm).not.toHaveBeenCalled()
+        expect(await repository.exists(file)).toBe(false)
+    })
+})
+
 describe('status', () => {
     it('reports all aggregates', async () => {
         await write(file, [

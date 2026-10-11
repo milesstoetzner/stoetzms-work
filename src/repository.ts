@@ -75,6 +75,35 @@ export async function add(type: string, file?: string, date = moment()) {
     await fs.appendFile(resolve(file), type + ' ' + date.format() + '\n')
 }
 
+function lines(data: string) {
+    const result = data.split(/\r?\n/)
+    while (result.length && result.at(-1)!.trim() === '') result.pop()
+    return result
+}
+
+/**
+ * The last entry as written in the file, if any.
+ */
+export async function latest(file?: string) {
+    return lines(await raw(file))
+        .at(-1)
+        ?.trim()
+}
+
+/**
+ * Removes the last entry. The file is replaced atomically.
+ */
+export async function pop(file?: string) {
+    const remaining = lines(await raw(file))
+    if (!remaining.length) throw new Error('Nothing to revert ...')
+    remaining.pop()
+
+    const target = resolve(file)
+    const tmp = `${target}.${process.pid}.tmp`
+    await fs.writeFile(tmp, remaining.map(it => it + '\n').join(''))
+    await fs.rename(tmp, target)
+}
+
 export function edit(file?: string) {
     const [command, ...args] = config.editor().trim().split(/\s+/)
     // Windows needs a shell to find "code.cmd" and alike

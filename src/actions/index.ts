@@ -7,11 +7,13 @@ import _edit from './edit'
 import _drop from './drop'
 import _cat from './cat'
 import _date from './date'
+import _revert from './revert'
 
 export default {
     status: _status,
     start: _start,
     stop: _stop,
+    revert: _revert,
     until: _until,
     focus: _focus,
     edit: _edit,

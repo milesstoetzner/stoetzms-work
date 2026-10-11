@@ -44,6 +44,17 @@ program
     )
 
 program
+    .command('revert')
+    .description('delete the last entry, i.e., undo the last start or stop')
+    .option('--file [string]', `the working hours file`)
+    .option('-y, --yes', 'do not ask for confirmation', false)
+    .action(
+        hae(async options => {
+            print(await actions.revert(options))
+        })
+    )
+
+program
     .command('until')
     .description('until goal reached')
     .option('--file [string]', `the working hours file`)
