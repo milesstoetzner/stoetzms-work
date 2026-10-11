@@ -145,6 +145,22 @@ describe('month', () => {
     })
 })
 
+describe('status', () => {
+    it('is computed as of a given time', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = session('2026-10-11T08:00:00+02:00')
+        expect(query.status(entries, moment('2026-10-11T10:00:00+02:00'))).toEqual({
+            date: '2026-10-11T10:00:00+02:00',
+            ever: '2 hours',
+            month: '2 hours',
+            week: '2 hours',
+            '24h': '2 hours',
+            today: '2 hours',
+            current: '2 hours',
+        })
+    })
+})
+
 describe('since', () => {
     it('is zero without entries', () => {
         now('2026-10-11T12:00:00+02:00')

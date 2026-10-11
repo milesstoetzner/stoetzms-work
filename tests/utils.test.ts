@@ -1,6 +1,6 @@
 import moment from 'moment'
 import {PassThrough} from 'node:stream'
-import {describe, expect, it} from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import * as utils from '../src/utils'
 
 describe('utils', () => {
@@ -63,5 +63,43 @@ describe('confirm', () => {
 
     it('rejects closed input', async () => {
         expect(await ask()).toBe(false)
+    })
+})
+
+describe('time', () => {
+    beforeEach(() => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date('2026-10-11T12:00:00+02:00'))
+    })
+
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
+    it('defaults to now', () => {
+        expect(utils.time().format()).toBe('2026-10-11T12:00:00+02:00')
+    })
+
+    it('parses HH:mm as today', () => {
+        expect(utils.time('09:15').format()).toBe('2026-10-11T09:15:00+02:00')
+        expect(utils.time('9:05').format()).toBe('2026-10-11T09:05:00+02:00')
+    })
+
+    it('parses HH:mm in the future as yesterday', () => {
+        expect(utils.time('23:50').format()).toBe('2026-10-10T23:50:00+02:00')
+    })
+
+    it('parses ISO 8601', () => {
+        expect(utils.time('2026-10-10T08:00:00+02:00').format()).toBe('2026-10-10T08:00:00+02:00')
+        expect(utils.time('2026-10-10T06:00:00Z').format()).toBe('2026-10-10T08:00:00+02:00')
+    })
+
+    it('rejects garbage', () => {
+        expect(() => utils.time('25:00')).toThrow('"25:00" is neither HH:mm nor an ISO 8601 date')
+        expect(() => utils.time('yesterday')).toThrow('is neither HH:mm nor an ISO 8601 date')
+    })
+
+    it('rejects the future', () => {
+        expect(() => utils.time('2026-10-12T08:00:00+02:00')).toThrow('is in the future')
     })
 })

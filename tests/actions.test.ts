@@ -41,6 +41,30 @@ describe('start', () => {
         expect(await actions.start({file})).toMatchObject({today: '1 hour', current: '0 seconds'})
     })
 
+    it('starts at a given time', async () => {
+        await actions.start({file, at: '09:15'})
+        expect(await read(file)).toBe('start 2026-10-11T09:15:00+02:00\n')
+    })
+
+    it('returns the status as of the given time', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00', 'stop 2026-10-11T09:00:00+02:00'])
+        expect(await actions.start({file, at: '10:00'})).toMatchObject({
+            date: '2026-10-11T10:00:00+02:00',
+            today: '1 hour',
+        })
+    })
+
+    it('refuses to start before the last stop', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00', 'stop 2026-10-11T09:00:00+02:00'])
+        await expect(actions.start({file, at: '08:30'})).rejects.toThrow('Cannot start before the last stop')
+        expect(await repository.load(file)).toHaveLength(2)
+    })
+
+    it('refuses an invalid time', async () => {
+        await expect(actions.start({file, at: 'soon'})).rejects.toThrow('is neither HH:mm nor an ISO 8601 date')
+        expect(await repository.exists(file)).toBe(false)
+    })
+
     it('refuses to start twice', async () => {
         await actions.start({file})
         await expect(actions.start({file})).rejects.toThrow('Already started')
@@ -59,6 +83,28 @@ describe('stop', () => {
     it('returns the status including the stopped session', async () => {
         await write(file, ['start 2026-10-11T10:00:00+02:00'])
         expect(await actions.stop({file})).toMatchObject({today: '2 hours', current: '2 hours'})
+    })
+
+    it('stops at a given time', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00'])
+        expect(await actions.stop({file, at: '11:30'})).toMatchObject({
+            today: '3 hours, 30 minutes',
+            current: '3 hours, 30 minutes',
+        })
+        expect((await repository.load(file))[1].date.format()).toBe('2026-10-11T11:30:00+02:00')
+    })
+
+    it('stops a session running across midnight at a time before midnight', async () => {
+        now('2026-10-11T00:30:00+02:00')
+        await write(file, ['start 2026-10-10T20:00:00+02:00'])
+        await actions.stop({file, at: '23:00'})
+        expect((await repository.load(file))[1].date.format()).toBe('2026-10-10T23:00:00+02:00')
+    })
+
+    it('refuses to stop before the start', async () => {
+        await write(file, ['start 2026-10-11T08:00:00+02:00'])
+        await expect(actions.stop({file, at: '07:00'})).rejects.toThrow('Cannot stop before the start')
+        expect(await repository.load(file)).toHaveLength(1)
     })
 
     it('does nothing when already stopped', async () => {
