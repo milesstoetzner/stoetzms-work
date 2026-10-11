@@ -34,11 +34,11 @@ export function current(entries: repository.Entry[]) {
 }
 
 export function today(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0)))
+    return utils.humanize(since(entries, moment().startOf('day')))
 }
 
 export function yesterday(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(24, 'hours')))
+    return utils.humanize(since(entries, moment().startOf('day').subtract(1, 'day')))
 }
 
 export function ever(entries: repository.Entry[]) {
@@ -46,11 +46,11 @@ export function ever(entries: repository.Entry[]) {
 }
 
 export function week(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(6, 'days')))
+    return utils.humanize(since(entries, moment().startOf('day').subtract(6, 'days')))
 }
 
 export function month(entries: repository.Entry[]) {
-    return utils.humanize(since(entries, moment().millisecond(0).second(0).minute(0).hour(0).subtract(30, 'days')))
+    return utils.humanize(since(entries, moment().startOf('day').subtract(30, 'days')))
 }
 
 /**
