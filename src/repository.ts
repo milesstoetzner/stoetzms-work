@@ -71,8 +71,8 @@ export function parse(data: string, file = FILE_DEFAULT) {
     return entries
 }
 
-export async function add(type: string, file?: string) {
-    await fs.appendFile(resolve(file), type + ' ' + moment().format() + '\n')
+export async function add(type: string, file?: string, date = moment()) {
+    await fs.appendFile(resolve(file), type + ' ' + date.format() + '\n')
 }
 
 export function edit(file?: string) {

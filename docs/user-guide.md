@@ -38,6 +38,18 @@ Commands:
   help [command]    display help for command
 ```
 
+## Correcting Times
+
+Forgot to start or stop? Pass the time it actually happened.
+
+```shell
+work start --at 09:15
+work stop --at 2026-10-11T18:30:00+02:00
+```
+
+`HH:mm` means the most recent such time, so `work stop --at 23:50` right after midnight means yesterday at 23:50.
+Times in the future, or before the previous entry, are rejected.
+
 ## Configuration
 
 The working hours are stored in `~/stoetzms-work.log` unless `--file` is given.

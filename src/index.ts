@@ -25,6 +25,7 @@ program
     .command('start')
     .description('start tracking')
     .option('--file [string]', `the working hours file`)
+    .option('--at [string]', 'start at "HH:mm" or an ISO 8601 date instead of now')
     .action(
         hae(async options => {
             print(await actions.start(options))
@@ -35,6 +36,7 @@ program
     .command('stop')
     .description('stop tracking')
     .option('--file [string]', `the working hours file`)
+    .option('--at [string]', 'stop at "HH:mm" or an ISO 8601 date instead of now')
     .action(
         hae(async options => {
             print(await actions.stop(options))

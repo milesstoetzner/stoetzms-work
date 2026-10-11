@@ -32,6 +32,27 @@ export function humanize(duration: moment.Duration) {
     return humanizeDuration(duration.asMilliseconds(), {units: ['h', 'm', 's'], round: true, largest: 2})
 }
 
+/**
+ * Parses "HH:mm" as the latest such time that is not in the future (so "23:50" right after midnight is yesterday) or
+ * else an ISO 8601 date. Defaults to now.
+ */
+export function time(value?: string) {
+    const now = moment()
+    if (value === undefined) return now
+
+    let result: moment.Moment
+    if (/^\d{1,2}:\d{2}$/.test(value)) {
+        result = moment(value, ['HH:mm', 'H:mm'], true)
+        if (result.isAfter(now)) result.subtract(1, 'day')
+    } else {
+        result = moment(value, moment.ISO_8601, true)
+    }
+
+    if (!result.isValid()) throw new Error(`"${value}" is neither HH:mm nor an ISO 8601 date`)
+    if (result.isAfter(now)) throw new Error(`"${value}" is in the future`)
+    return result
+}
+
 export function numerize(duration: string): number {
     const data = parseDuration(duration)
     if (data === null || !Number.isInteger(data)) throw new Error(`"${duration}" cannot be parsed as duration`)
