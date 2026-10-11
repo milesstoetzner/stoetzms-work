@@ -1,6 +1,7 @@
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import parseDuration from 'parse-duration'
+import yaml from 'js-yaml'
 
 export function hae<T>(action: (options: T) => Promise<any>): (options: T) => Promise<void> {
     return async (options: T) => {
@@ -40,6 +41,27 @@ export function beep() {
     process.stdout.write('\x07')
 }
 
-export function sleep(ms = 1000) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+/**
+ * Resolves after ms or as soon as the signal is aborted.
+ */
+export function sleep(ms = 1000, signal?: AbortSignal) {
+    return new Promise<void>(resolve => {
+        if (signal?.aborted) return resolve()
+        const done = () => {
+            clearTimeout(timer)
+            signal?.removeEventListener('abort', done)
+            resolve()
+        }
+        const timer = setTimeout(done, ms)
+        signal?.addEventListener('abort', done)
+    })
+}
+
+/**
+ * Prints strings as is and everything else as YAML.
+ */
+export function print(data: unknown) {
+    if (data === undefined) return
+    if (typeof data === 'string') return console.log(data)
+    console.log(yaml.dump(data))
 }

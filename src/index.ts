@@ -2,8 +2,10 @@
 
 import {Command} from 'commander'
 import actions from './actions'
-import {hae} from './utils'
+import * as utils from './utils'
+import {hae, print} from './utils'
 import * as config from './config'
+import yaml from 'js-yaml'
 
 const program = new Command()
 
@@ -15,7 +17,7 @@ program
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
-            await actions.status(options)
+            print(await actions.status(options))
         })
     )
 
@@ -25,7 +27,7 @@ program
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
-            await actions.start(options)
+            print(await actions.start(options))
         })
     )
 
@@ -35,7 +37,7 @@ program
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
-            await actions.stop(options)
+            print(await actions.stop(options))
         })
     )
 
@@ -47,7 +49,7 @@ program
     .option('--since [string]', 'the duration since when to achieve the goal (default: today)')
     .action(
         hae(async options => {
-            await actions.until(options)
+            print(await actions.until(options))
         })
     )
 
@@ -58,7 +60,18 @@ program
     .option('--goal [string]', 'the duration to work', '6h')
     .action(
         hae(async options => {
-            await actions.focus(options)
+            const controller = new AbortController()
+            process.on('SIGINT', () => controller.abort())
+
+            const status = await actions.focus(options, {
+                signal: controller.signal,
+                onStart: data => process.stdout.write(yaml.dump(data)),
+                onTick: remaining => process.stdout.write(`\r\x1b[Kremaining: ${utils.humanize(remaining)}`),
+            })
+
+            process.stdout.write(`\r\x1b[Kremaining: ${controller.signal.aborted ? 'aborted' : 0}\n\n`)
+            print(status)
+            if (!controller.signal.aborted) utils.beep()
         })
     )
 
@@ -78,7 +91,7 @@ program
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
-            await actions.cat(options)
+            print(await actions.cat(options))
         })
     )
 
@@ -98,7 +111,7 @@ program
     .description('get current date')
     .action(
         hae(async options => {
-            await actions.date(options)
+            print(await actions.date(options))
         })
     )
 
