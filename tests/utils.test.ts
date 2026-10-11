@@ -162,3 +162,45 @@ describe('csv', () => {
         expect(utils.csv([])).toBe('')
     })
 })
+
+describe('print', () => {
+    let log: MockInstance<typeof console.log>
+
+    beforeEach(() => {
+        log = vi.spyOn(console, 'log').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
+
+    it('prints YAML by default', () => {
+        utils.print({today: '1 hour'})
+        expect(log).toHaveBeenCalledWith('today: 1 hour\n')
+    })
+
+    it('prints JSON', () => {
+        utils.print([{period: '2026-10-11', hours: 1}], 'json')
+        expect(log).toHaveBeenCalledWith('[\n    {\n        "period": "2026-10-11",\n        "hours": 1\n    }\n]')
+    })
+
+    it('prints an array as CSV rows', () => {
+        utils.print([{period: '2026-10-11', hours: 1}], 'csv')
+        expect(log).toHaveBeenCalledWith('period,hours\n2026-10-11,1')
+    })
+
+    it('prints an object as a single CSV row', () => {
+        utils.print({today: '1 hour', current: '0 seconds'}, 'csv')
+        expect(log).toHaveBeenCalledWith('today,current\n1 hour,0 seconds')
+    })
+
+    it('prints strings as is in every format', () => {
+        utils.print('2026-10-11T12:00:00+02:00', 'json')
+        expect(log).toHaveBeenCalledWith('2026-10-11T12:00:00+02:00')
+    })
+
+    it('prints nothing for undefined', () => {
+        utils.print(undefined)
+        expect(log).not.toHaveBeenCalled()
+    })
+})

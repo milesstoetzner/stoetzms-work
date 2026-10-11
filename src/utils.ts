@@ -82,12 +82,18 @@ export function sleep(ms = 1000, signal?: AbortSignal) {
     })
 }
 
+export const OUTPUTS = ['yaml', 'json', 'csv'] as const
+
+export type Output = (typeof OUTPUTS)[number]
+
 /**
- * Prints strings as is and everything else as YAML.
+ * Prints strings as is and everything else in the given output format. For CSV, an object is a single row.
  */
-export function print(data: unknown) {
+export function print(data: unknown, output: Output = 'yaml') {
     if (data === undefined) return
     if (typeof data === 'string') return console.log(data)
+    if (output === 'json') return console.log(JSON.stringify(data, null, 4))
+    if (output === 'csv') return console.log(csv(Array.isArray(data) ? data : [data as Record<string, unknown>]))
     console.log(yaml.dump(data))
 }
 

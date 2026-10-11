@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-import {Command} from 'commander'
+import {Command, Option} from 'commander'
 import actions from './actions'
 import * as utils from './utils'
-import {hae, print} from './utils'
+import {hae} from './utils'
 import * as version from './version'
-import yaml from 'js-yaml'
 
 const program = new Command()
 
 program.name('work').description('A simple utility for tracking working hours.').version(version.VERSION)
+
+program.addOption(new Option('-o, --output <format>', 'the output format').choices(utils.OUTPUTS).default('yaml'))
+
+function print(data: unknown) {
+    utils.print(data, program.opts().output)
+}
 
 program
     .command('status')
@@ -72,14 +77,9 @@ program
     .option('--file [string]', `the working hours file`)
     .option('--by [string]', 'the period (day, week, month)', 'day')
     .option('--last [number]', 'the number of periods', '7')
-    .option('--format [string]', 'the output format (yaml, json, csv)', 'yaml')
     .action(
         hae(async options => {
-            const rows = await actions.report(options)
-            if (options.format === 'yaml') return print(Object.fromEntries(rows.map(row => [row.period, row.total])))
-            if (options.format === 'json') return print(JSON.stringify(rows, null, 4))
-            if (options.format === 'csv') return print(utils.csv(rows))
-            throw new Error(`"${options.format}" is not one of yaml, json, csv`)
+            print(await actions.report(options))
         })
     )
 
@@ -95,7 +95,7 @@ program
 
             const status = await actions.focus(options, {
                 signal: controller.signal,
-                onStart: data => process.stdout.write(yaml.dump(data)),
+                onStart: data => print(data),
                 onTick: remaining => process.stdout.write(`\r\x1b[Kremaining: ${utils.humanize(remaining)}`),
             })
 
