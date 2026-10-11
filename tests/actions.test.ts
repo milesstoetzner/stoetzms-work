@@ -57,8 +57,7 @@ describe('stop', () => {
         expect(await repository.load(file)).toHaveLength(2)
     })
 
-    // BUG: stop on an empty file writes "stop ..." as first line, after which every command fails with "Index 0 not START".
-    it.fails('does not corrupt an empty file', async () => {
+    it('does nothing on an empty file', async () => {
         await actions.stop({file})
         await expect(repository.load(file)).resolves.toEqual([])
     })
