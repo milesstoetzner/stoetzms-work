@@ -1,9 +1,5 @@
 import * as utils from '../utils'
 
-export type DateOptions = {
-    file?: string
-}
-
-export default async function (options: DateOptions) {
+export default async function () {
     console.log(utils.date())
 }

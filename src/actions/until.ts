@@ -1,5 +1,5 @@
 import * as repository from '../repository'
-import moment from 'moment/moment'
+import moment from 'moment'
 import * as utils from '../utils'
 import {since} from '../query'
 import yaml from 'js-yaml'

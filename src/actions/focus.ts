@@ -1,4 +1,4 @@
-import moment from 'moment/moment'
+import moment from 'moment'
 import * as utils from '../utils'
 import yaml from 'js-yaml'
 import actions from './index'
