@@ -8,6 +8,7 @@ import _drop from './drop'
 import _cat from './cat'
 import _date from './date'
 import _revert from './revert'
+import _report from './report'
 
 export default {
     status: _status,
@@ -15,6 +16,7 @@ export default {
     stop: _stop,
     revert: _revert,
     until: _until,
+    report: _report,
     focus: _focus,
     edit: _edit,
     drop: _drop,

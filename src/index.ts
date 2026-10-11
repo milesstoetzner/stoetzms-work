@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-import {Command} from 'commander'
+import {Command, Option} from 'commander'
 import actions from './actions'
 import * as utils from './utils'
-import {hae, print} from './utils'
+import {hae} from './utils'
 import * as version from './version'
-import yaml from 'js-yaml'
 
 const program = new Command()
 
 program.name('work').description('A simple utility for tracking working hours.').version(version.VERSION)
+
+program.addOption(new Option('-o, --output <format>', 'the output format').choices(utils.OUTPUTS).default('yaml'))
+
+function print(data: unknown) {
+    utils.print(data, program.opts().output)
+}
 
 program
     .command('status')
@@ -67,6 +72,18 @@ program
     )
 
 program
+    .command('report')
+    .description('report the working hours per period')
+    .option('--file [string]', `the working hours file`)
+    .option('--by [string]', 'the period (day, week, month)', 'day')
+    .option('--last [number]', 'the number of periods', '7')
+    .action(
+        hae(async options => {
+            print(await actions.report(options))
+        })
+    )
+
+program
     .command('focus')
     .description('focus')
     .option('--file [string]', `the working hours file`)
@@ -78,7 +95,7 @@ program
 
             const status = await actions.focus(options, {
                 signal: controller.signal,
-                onStart: data => process.stdout.write(yaml.dump(data)),
+                onStart: data => print(data),
                 onTick: remaining => process.stdout.write(`\r\x1b[Kremaining: ${utils.humanize(remaining)}`),
             })
 

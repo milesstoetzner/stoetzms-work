@@ -22,22 +22,46 @@ Usage: work [options] [command]
 A simple utility for tracking working hours.
 
 Options:
-  -V, --version     output the version number
-  -h, --help        display help for command
+  -V, --version          output the version number
+  -o, --output <format>  the output format (choices: "yaml", "json", "csv",
+                         default: "yaml")
+  -h, --help             display help for command
 
 Commands:
-  status [options]  get the current working status
-  start [options]   start tracking
-  stop [options]    stop tracking
-  revert [options]  delete the last entry, i.e., undo the last start or stop
-  until [options]   until goal reached
-  focus [options]   focus
-  edit [options]    open the working hours file in an editor
-  cat [options]     cat the working hours file
-  drop [options]    drop the working hours file
-  date [options]    get current date
-  help [command]    display help for command
+  status [options]       get the current working status
+  start [options]        start tracking
+  stop [options]         stop tracking
+  revert [options]       delete the last entry, i.e., undo the last start or
+                         stop
+  until [options]        until goal reached
+  report [options]       report the working hours per period
+  focus [options]        focus
+  edit [options]         open the working hours file in an editor
+  cat [options]          cat the working hours file
+  drop [options]         drop the working hours file
+  date                   get current date
+  help [command]         display help for command
 ```
+
+## Reports
+
+`work report` shows the working hours per day of the last 7 days.
+Use `--by week` or `--by month` for other periods and `--last <n>` for more or fewer periods.
+
+```shell
+$ work report --by week --last 2
+- period: 2026-W40
+  hours: 28.08
+  total: 28 hours, 5 minutes
+- period: 2026-W41
+  hours: 6.5
+  total: 6 hours, 30 minutes
+```
+
+## Output
+
+Commands print YAML by default.
+Use `-o json` or `-o csv` (`--output`) for further processing, e.g., `work report -o csv > hours.csv`.
 
 ## Correcting Times
 
