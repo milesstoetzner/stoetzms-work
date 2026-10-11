@@ -52,6 +52,14 @@ For running the tests ...
 yarn test
 ```
 
+The tests in `tests/cli` run the actual CLI as a separate process, each in its own temporary directory.
+For running only them, optionally against the built bundle instead of the sources ...
+
+```shell
+yarn test:cli
+STOETZMS_WORK_CLI=dist/stoetzms-work.js yarn test:cli
+```
+
 For checking the code style ...
 
 ```shell

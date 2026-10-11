@@ -74,6 +74,11 @@ jobs:
             - name: (DIST) Build Project
               run: yarn dist:build
 
+            - name: (DIST) Test Bundle
+              run: yarn test:cli
+              env:
+                  STOETZMS_WORK_CLI: dist/stoetzms-work.js
+
             - name: (DIST) Package Binaries
               run: yarn dist:package
 
