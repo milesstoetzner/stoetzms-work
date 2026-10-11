@@ -7,7 +7,7 @@ import _edit from './edit'
 import _drop from './drop'
 import _cat from './cat'
 import _date from './date'
-import _wake from './wake'
+import _awake from './awake'
 import _revert from './revert'
 import _report from './report'
 
@@ -23,5 +23,5 @@ export default {
     drop: _drop,
     cat: _cat,
     date: _date,
-    wake: _wake,
+    awake: _awake,
 }

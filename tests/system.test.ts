@@ -39,15 +39,15 @@ describe('latest', () => {
     })
 })
 
-describe('wake', () => {
+describe('awake', () => {
     it('is the boot time computed from the uptime', () => {
         const expected = Date.now() - os.uptime() * 1000
         expect(Math.abs(system.boot().valueOf() - expected)).toBeLessThan(2000)
     })
 
     it('is between boot and now on this machine', async () => {
-        const wake = await system.wake()
-        expect(wake.isSameOrAfter(system.boot().subtract(2, 'seconds'))).toBe(true)
-        expect(wake.isSameOrBefore(moment())).toBe(true)
+        const awake = await system.awake()
+        expect(awake.isSameOrAfter(system.boot().subtract(2, 'seconds'))).toBe(true)
+        expect(awake.isSameOrBefore(moment())).toBe(true)
     })
 })

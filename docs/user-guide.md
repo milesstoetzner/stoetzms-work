@@ -40,7 +40,7 @@ Commands:
   cat [options]          cat the working hours file
   drop [options]         drop the working hours file
   date                   get current date
-  wake                   get when this machine was woken up or booted, e.g.,
+  awake                  get when this machine was woken up or booted, e.g.,
                          for "start --at"
   help [command]         display help for command
 ```
@@ -77,8 +77,8 @@ work stop --at 2026-10-11T18:30:00+02:00
 Forgot to start and don't know when? Start when your machine woke up from sleep, or booted if it has not slept since.
 
 ```shell
-work start --at wake
-work wake   # just print that time
+work start --at awake
+work awake  # just print that time
 ```
 
 `HH:mm` means the most recent such time, so `work stop --at 23:50` right after midnight means yesterday at 23:50.

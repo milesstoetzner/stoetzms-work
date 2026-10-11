@@ -42,7 +42,7 @@ program
     .description('start tracking')
     .option('--file [string]', `the working hours file`)
     .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
-    .option('--at [string]', 'start at "HH:mm", an ISO 8601 date or "wake" (see "work wake") instead of now')
+    .option('--at [string]', 'start at "HH:mm", an ISO 8601 date or "awake" (see "work awake") instead of now')
     .action(
         hae(async options => {
             print(await actions.start(options))
@@ -166,11 +166,11 @@ program
     )
 
 program
-    .command('wake')
+    .command('awake')
     .description('get when this machine was woken up or booted, e.g., for "start --at"')
     .action(
         hae(async options => {
-            print(await actions.wake(options))
+            print(await actions.awake(options))
         })
     )
 

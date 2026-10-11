@@ -16,7 +16,7 @@ const WINDOWS = `
 /**
  * When this machine was last woken up from sleep or, if it has not slept since, booted.
  */
-export async function wake() {
+export async function awake() {
     const booted = boot()
     const woken = await resumed().catch(() => undefined)
     return woken && woken.isAfter(booted) ? woken : booted

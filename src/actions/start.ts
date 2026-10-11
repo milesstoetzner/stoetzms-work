@@ -12,7 +12,7 @@ export type StartOptions = {
  * Starts tracking (now, at the given time, or when this machine woke up) and returns the status right before.
  */
 export default async function (options: StartOptions) {
-    const at = options.at === 'wake' ? await system.wake() : utils.time(options.at)
+    const at = options.at === 'awake' ? await system.awake() : utils.time(options.at)
     const entries = await repository.load(options.file)
 
     const latest = utils.last(entries)
