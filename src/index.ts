@@ -4,12 +4,12 @@ import {Command} from 'commander'
 import actions from './actions'
 import * as utils from './utils'
 import {hae, print} from './utils'
-import * as config from './config'
+import * as version from './version'
 import yaml from 'js-yaml'
 
 const program = new Command()
 
-program.name('work').description('A simple utility for tracking working hours.').version(config.VERSION)
+program.name('work').description('A simple utility for tracking working hours.').version(version.VERSION)
 
 program
     .command('status')

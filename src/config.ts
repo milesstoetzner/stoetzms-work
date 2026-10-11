@@ -3,8 +3,6 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import yaml from 'js-yaml'
 
-export const VERSION = `${process.env.STOETZMS_WORK_COMMIT ?? 'LOCAL'} (${process.env.STOETZMS_WORK_VERSION ?? 'LOCAL'})`
-
 export type Config = {
     // the default working hours file
     file?: string
