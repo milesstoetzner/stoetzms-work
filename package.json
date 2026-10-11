@@ -6,10 +6,10 @@
     },
     "pkg": {
         "targets": [
-            "node22-linux-x64",
-            "node22-linux-arm64",
-            "node22-win-x64",
-            "node22-win-arm64"
+            "node24-linux-x64",
+            "node24-linux-arm64",
+            "node24-win-x64",
+            "node24-win-arm64"
         ],
         "outputPath": "dist"
     },
@@ -45,19 +45,19 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.28.0",
-        "@tsconfig/node22": "^22.0.2",
+        "@tsconfig/node24": "^24.0.5",
         "@types/humanize-duration": "^3.27.4",
         "@types/js-yaml": "^4.0.9",
         "@types/lodash": "^4.17.17",
-        "@types/node": "^22.15.30",
-        "@yao-pkg/pkg": "^6.5.1",
+        "@types/node": "^24.19.2",
+        "@yao-pkg/pkg": "6.22.0",
         "eslint": "^9.28.0",
         "eslint-config-prettier": "^10.1.5",
         "license-checker": "^25.0.1",
         "pkgroll": "^2.12.2",
         "prettier": "^3.5.3",
         "tsx": "^4.19.4",
-        "typescript": "^5.8.3",
+        "typescript": "^5.9.3",
         "typescript-eslint": "^8.33.1",
         "vitepress": "^1.6.3",
         "vitest": "^3.2.4"

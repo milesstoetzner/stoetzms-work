@@ -10,6 +10,12 @@ Make sure that your IDE is using Prettier and ESLint and their corresponding con
 
 ## Code
 
+We use the Node.js version in `.nvmrc`, currently the LTS Node.js 24.
+
+```shell
+nvm use
+```
+
 For installing dependencies ...
 
 ```shell
