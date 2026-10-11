@@ -35,27 +35,34 @@ export async function raw(file = FILE_DEFAULT) {
 }
 
 export async function load(file = FILE_DEFAULT) {
-    const data = await raw(file)
+    return parse(await raw(file), resolve(file))
+}
 
-    const entries = []
-    for (const [index, line] of data
-        .split(/\r?\n/)
-        .filter(it => it !== '')
-        .entries()) {
-        const tmp = line.split(' ')
-
-        if (index % 2 === 0) {
-            if (tmp[0] !== START) throw new Error(`Index ${index} not START`)
+/**
+ * Parses the log. Entries must alternate between start and stop, each with an ISO 8601 date, in chronological order.
+ */
+export function parse(data: string, file = FILE_DEFAULT) {
+    const entries: Entry[] = []
+    for (const [index, line] of data.split(/\r?\n/).entries()) {
+        if (line.trim() === '') continue
+        const fail = (reason: string) => {
+            throw new Error(`${file}:${index + 1}: ${reason}: "${line}"`)
         }
 
-        if (index % 2 === 1) {
-            if (tmp[0] !== STOP) throw new Error(`Index ${index} not STOP`)
-        }
+        const fields = line.trim().split(/\s+/)
+        if (fields.length !== 2) fail('expected "<start|stop> <date>"')
+        const [type, value] = fields
 
-        entries.push({
-            type: tmp[0],
-            date: moment(tmp[1]),
-        })
+        const expected = entries.length % 2 === 0 ? START : STOP
+        if (type !== expected) fail(`expected ${expected}`)
+
+        const date = moment(value, moment.ISO_8601, true)
+        if (!date.isValid()) fail('invalid date')
+
+        const previous = entries.at(-1)
+        if (previous && date.isBefore(previous.date)) fail(`date before previous ${previous.type}`)
+
+        entries.push({type, date})
     }
 
     return entries
