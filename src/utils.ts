@@ -114,5 +114,9 @@ export async function confirm(
 export function csv(rows: Record<string, unknown>[]) {
     if (!rows.length) return ''
     const keys = Object.keys(rows[0])
-    return [keys.join(','), ...rows.map(row => keys.map(key => String(row[key])).join(','))].join('\n')
+    const cell = (value: unknown) => {
+        const text = String(value)
+        return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text
+    }
+    return [keys.map(cell).join(','), ...rows.map(row => keys.map(key => cell(row[key])).join(','))].join('\n')
 }

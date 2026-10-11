@@ -152,6 +152,12 @@ describe('csv', () => {
         ).toBe('period,hours\n2026-10-10,2\n2026-10-11,0.5')
     })
 
+    it('quotes cells with commas and quotes', () => {
+        expect(utils.csv([{total: '2 hours, 30 minutes', note: 'say "hi"'}])).toBe(
+            'total,note\n"2 hours, 30 minutes","say ""hi"""'
+        )
+    })
+
     it('is empty without rows', () => {
         expect(utils.csv([])).toBe('')
     })
