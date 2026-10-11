@@ -1,6 +1,6 @@
 import moment from 'moment'
 import {PassThrough} from 'node:stream'
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, MockInstance, vi} from 'vitest'
 import * as utils from '../src/utils'
 
 describe('utils', () => {
@@ -101,5 +101,43 @@ describe('time', () => {
 
     it('rejects the future', () => {
         expect(() => utils.time('2026-10-12T08:00:00+02:00')).toThrow('is in the future')
+    })
+})
+
+describe('hae', () => {
+    let error: MockInstance<typeof console.error>
+
+    beforeEach(() => {
+        error = vi.spyOn(console, 'error').mockImplementation(() => {})
+        vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
+    })
+
+    afterEach(() => {
+        vi.restoreAllMocks()
+        vi.unstubAllEnvs()
+    })
+
+    it('prints only the message to stderr and exits with 1', async () => {
+        vi.stubEnv('DEBUG', undefined)
+        await utils.hae(async () => {
+            throw new Error('Already started ...')
+        })({})
+        expect(error).toHaveBeenCalledWith('Error: Already started ...')
+        expect(process.exit).toHaveBeenCalledWith(1)
+    })
+
+    it('prints the stack trace if DEBUG is set', async () => {
+        vi.stubEnv('DEBUG', '1')
+        const e = new Error('Already started ...')
+        await utils.hae(async () => {
+            throw e
+        })({})
+        expect(error).toHaveBeenCalledWith(e)
+    })
+
+    it('does nothing on success', async () => {
+        await utils.hae(async () => {})({})
+        expect(error).not.toHaveBeenCalled()
+        expect(process.exit).not.toHaveBeenCalled()
     })
 })
