@@ -33,7 +33,6 @@ program
     .command('stop')
     .description('stop tracking')
     .option('--file [string]', `the working hours file`)
-    .option('--strict [boolean]', `abort if already stopped`)
     .action(
         hae(async options => {
             await actions.stop(options)
@@ -97,7 +96,6 @@ program
 program
     .command('date')
     .description('get current date')
-    .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
             await actions.date(options)

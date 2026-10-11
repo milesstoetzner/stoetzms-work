@@ -1,4 +1,4 @@
-import moment from 'moment/moment'
+import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import parseDuration from 'parse-duration'
 
