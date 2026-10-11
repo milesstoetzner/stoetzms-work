@@ -1,0 +1,172 @@
+import moment from 'moment'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import * as query from '../src/query'
+import {hours, now, session} from './helpers'
+
+beforeEach(() => {
+    vi.useFakeTimers()
+})
+
+afterEach(() => {
+    vi.useRealTimers()
+})
+
+describe('current', () => {
+    it('is zero without entries', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.current([])).toBe('0 seconds')
+    })
+
+    it('is zero when stopped', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.current(session('2026-10-11T08:00:00+02:00', '2026-10-11T09:00:00+02:00'))).toBe('0 seconds')
+    })
+
+    it('is the running session', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.current(session('2026-10-11T10:30:00+02:00'))).toBe('1 hour, 30 minutes')
+    })
+})
+
+describe('ever', () => {
+    it('is zero without entries', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.ever([])).toBe('0 seconds')
+    })
+
+    it('sums all sessions including the running one', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = [
+            ...session('2024-01-01T08:00:00+01:00', '2024-01-01T10:00:00+01:00'),
+            ...session('2026-10-10T08:00:00+02:00', '2026-10-10T09:00:00+02:00'),
+            ...session('2026-10-11T11:00:00+02:00'),
+        ]
+        expect(query.ever(entries)).toBe('4 hours')
+    })
+})
+
+describe('today', () => {
+    it('counts only sessions since midnight', () => {
+        now('2026-10-11T18:00:00+02:00')
+        const entries = [
+            ...session('2026-10-10T08:00:00+02:00', '2026-10-10T16:00:00+02:00'),
+            ...session('2026-10-11T08:00:00+02:00', '2026-10-11T10:00:00+02:00'),
+            ...session('2026-10-11T11:00:00+02:00', '2026-10-11T12:30:00+02:00'),
+        ]
+        expect(query.today(entries)).toBe('3 hours, 30 minutes')
+    })
+
+    it('counts a running session', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.today(session('2026-10-11T10:00:00+02:00'))).toBe('2 hours')
+    })
+
+    it('counts only the part after midnight of a stopped session crossing midnight', () => {
+        now('2026-10-11T10:00:00+02:00')
+        expect(query.today(session('2026-10-10T22:00:00+02:00', '2026-10-11T01:00:00+02:00'))).toBe('1 hour')
+    })
+
+    it('counts only the part after midnight of a running session crossing midnight', () => {
+        now('2026-10-11T01:00:00+02:00')
+        expect(query.today(session('2026-10-10T23:00:00+02:00'))).toBe('1 hour')
+    })
+
+    it('counts a crossing session plus later sessions', () => {
+        now('2026-10-11T10:00:00+02:00')
+        const entries = [
+            ...session('2026-10-10T22:00:00+02:00', '2026-10-11T01:00:00+02:00'),
+            ...session('2026-10-11T08:00:00+02:00'),
+        ]
+        expect(query.today(entries)).toBe('3 hours')
+    })
+
+    it('is zero right after midnight when the last session ended before', () => {
+        now('2026-10-11T00:00:30+02:00')
+        expect(query.today(session('2026-10-10T20:00:00+02:00', '2026-10-10T23:59:00+02:00'))).toBe('0 seconds')
+    })
+
+    // BUG: since() only handles start < limit and start > limit, so start === limit is skipped.
+    it.fails('counts a session starting exactly at midnight', () => {
+        now('2026-10-11T10:00:00+02:00')
+        expect(query.today(session('2026-10-11T00:00:00+02:00', '2026-10-11T02:00:00+02:00'))).toBe('2 hours')
+    })
+})
+
+describe('yesterday ("24h")', () => {
+    it('counts since midnight of the previous day', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = [
+            ...session('2026-10-09T08:00:00+02:00', '2026-10-09T10:00:00+02:00'),
+            ...session('2026-10-10T08:00:00+02:00', '2026-10-10T10:00:00+02:00'),
+            ...session('2026-10-11T08:00:00+02:00', '2026-10-11T09:00:00+02:00'),
+        ]
+        expect(query.yesterday(entries)).toBe('3 hours')
+    })
+
+    // BUG: the straddling session is clipped at midnight of its stop day, not at the limit.
+    it.fails('counts a session spanning two midnights from the limit on', () => {
+        now('2026-10-11T10:00:00+02:00')
+        expect(query.yesterday(session('2026-10-09T22:00:00+02:00', '2026-10-11T01:00:00+02:00'))).toBe('25 hours')
+    })
+
+    // BUG: subtract(24, 'hours') is not a calendar day on the day after a DST switch (2026-10-25 in Europe/Berlin).
+    it.fails('starts at midnight of the previous day after a DST switch', () => {
+        now('2026-10-26T10:00:00+01:00')
+        expect(query.yesterday(session('2026-10-25T00:00:00+02:00', '2026-10-25T00:30:00+02:00'))).toBe('30 minutes')
+    })
+})
+
+describe('week', () => {
+    it('counts today and the six days before', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = [
+            ...session('2026-10-04T08:00:00+02:00', '2026-10-04T10:00:00+02:00'),
+            ...session('2026-10-05T08:00:00+02:00', '2026-10-05T10:00:00+02:00'),
+            ...session('2026-10-11T08:00:00+02:00', '2026-10-11T09:00:00+02:00'),
+        ]
+        expect(query.week(entries)).toBe('3 hours')
+    })
+})
+
+describe('month', () => {
+    it('counts today and the thirty days before', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = [
+            ...session('2026-09-10T08:00:00+02:00', '2026-09-10T10:00:00+02:00'),
+            ...session('2026-09-11T08:00:00+02:00', '2026-09-11T10:00:00+02:00'),
+            ...session('2026-10-11T08:00:00+02:00', '2026-10-11T09:00:00+02:00'),
+        ]
+        expect(query.month(entries)).toBe('3 hours')
+    })
+})
+
+describe('since', () => {
+    it('is zero without entries', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(hours(query.since([], moment().subtract(8, 'hours')))).toBe(0)
+    })
+
+    it('counts sessions after a non-midnight limit', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = [
+            ...session('2026-10-11T02:00:00+02:00', '2026-10-11T03:00:00+02:00'),
+            ...session('2026-10-11T05:00:00+02:00', '2026-10-11T07:00:00+02:00'),
+            ...session('2026-10-11T11:00:00+02:00'),
+        ]
+        expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(3)
+    })
+
+    // BUG: the straddling session is clipped at midnight of its stop day (counts 00:00-05:00 = 5h).
+    it.fails('clips a session straddling a non-midnight limit at the limit', () => {
+        now('2026-10-11T12:00:00+02:00')
+        const entries = session('2026-10-11T03:00:00+02:00', '2026-10-11T05:00:00+02:00')
+        expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(1)
+    })
+
+    // BUG: same root cause, across midnight it counts only 00:00-01:00.
+    it.fails('clips a session straddling a limit before midnight at the limit', () => {
+        now('2026-10-11T02:00:00+02:00')
+        const entries = session('2026-10-10T17:00:00+02:00', '2026-10-11T01:00:00+02:00')
+        expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(7)
+    })
+})
