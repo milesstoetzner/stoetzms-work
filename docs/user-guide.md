@@ -5,13 +5,13 @@
 Install the binary on Linux using ...
 
 ```shell
-curl -fsSL https://vintner.opentosca.org/install.sh | sudo bash -
+curl -fsSL https://work.stoetz.ms/install.sh | sudo bash -
 ```
 
 Install the binary on Windows using ...
 
 ```powershell
-powershell -Command "& {Invoke-WebRequest -Uri 'https://vintner.opentosca.org/install.ps1' -UseBasicParsing | Invoke-Expression}"
+powershell -Command "& {Invoke-WebRequest -Uri 'https://work.stoetz.ms/install.ps1' -UseBasicParsing | Invoke-Expression}"
 ```
 
 ## Usage
