@@ -12,14 +12,14 @@ export type Session = {
  */
 export function sessions(entries: repository.Entry[]): Session[] {
     const now = moment()
-    const sessions = []
+    const result = []
     for (let index = 0; index < entries.length; index += 2) {
-        sessions.push({
+        result.push({
             start: entries[index].date,
             stop: entries[index + 1]?.date ?? now,
         })
     }
-    return sessions
+    return result
 }
 
 export function current(entries: repository.Entry[]) {
