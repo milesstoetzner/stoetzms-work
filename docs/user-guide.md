@@ -29,7 +29,7 @@ Commands:
   status [options]  get the current working status
   start [options]   start tracking
   stop [options]    stop tracking
-  cancel [options]  discard the running session
+  revert [options]  delete the last entry, i.e., undo the last start or stop
   until [options]   until goal reached
   focus [options]   focus
   edit [options]    open the working hours file in an editor
@@ -50,6 +50,9 @@ work stop --at 2026-10-11T18:30:00+02:00
 
 `HH:mm` means the most recent such time, so `work stop --at 23:50` right after midnight means yesterday at 23:50.
 Times in the future, or before the previous entry, are rejected.
+
+Started or stopped by accident? `work revert` deletes the last entry after showing it and asking for confirmation (`--yes` skips the question).
+Reverting a start discards the running session; reverting a stop lets the session run again.
 
 ## Configuration
 

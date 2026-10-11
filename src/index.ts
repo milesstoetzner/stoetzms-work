@@ -44,12 +44,13 @@ program
     )
 
 program
-    .command('cancel')
-    .description('discard the running session')
+    .command('revert')
+    .description('delete the last entry, i.e., undo the last start or stop')
     .option('--file [string]', `the working hours file`)
+    .option('-y, --yes', 'do not ask for confirmation', false)
     .action(
         hae(async options => {
-            print(await actions.cancel(options))
+            print(await actions.revert(options))
         })
     )
 
