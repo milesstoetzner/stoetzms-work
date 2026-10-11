@@ -14,40 +14,81 @@ Install the binary on Windows using ...
 powershell -Command "& {Invoke-WebRequest -Uri 'https://work.stoetz.ms/install.ps1' -UseBasicParsing | Invoke-Expression}"
 ```
 
-## Usage
+## Quick Start
 
-```
-Usage: work [options] [command]
-
-A simple utility for tracking working hours.
-
-Options:
-  -V, --version          output the version number
-  -o, --output <format>  the output format (choices: "yaml", "json", "csv",
-                         default: "yaml")
-  -h, --help             display help for command
-
-Commands:
-  status [options]       get the current working status
-  start [options]        start tracking
-  stop [options]         stop tracking
-  revert [options]       delete the last entry, i.e., undo the last start or
-                         stop
-  until [options]        until goal reached
-  report [options]       report the working hours per period
-  focus [options]        focus
-  edit [options]         open the working hours file in an editor
-  cat [options]          cat the working hours file
-  drop [options]         drop the working hours file
-  date                   get current date
-  awake                  get when this machine was woken up or booted, e.g.,
-                         for "start --at"
-  help [command]         display help for command
+```shell
+work start    # start tracking
+work status   # see how much you worked
+work stop     # stop tracking
 ```
 
-## Reports
+Run `work --help` or `work <command> --help` for all options.
 
-`work report` shows the working hours per day of the last 7 days.
+## Commands
+
+### status
+
+Shows how much you worked: `today`, since midnight yesterday (`24h`), the last 7 days (`week`), the last 31 days (`month`), in total (`ever`), and in the running session (`current`).
+
+```shell
+$ work status
+date: '2026-10-11T12:00:00+02:00'
+ever: 312 hours, 5 minutes
+month: 120 hours, 10 minutes
+week: 31 hours, 20 minutes
+24h: 9 hours, 15 minutes
+today: 3 hours, 30 minutes
+current: 1 hour, 5 minutes
+```
+
+### start
+
+Starts tracking and shows the status.
+Use `--at` if you forgot to start: `HH:mm`, an ISO 8601 date, or `awake` (see [awake](#awake)).
+
+```shell
+work start
+work start --at 09:15
+```
+
+### stop
+
+Stops tracking and shows the status, including how long the session was (`current`).
+Use `--at` if you forgot to stop.
+
+```shell
+work stop
+work stop --at 18:30
+```
+
+`HH:mm` means the most recent such time, so `work stop --at 23:50` right after midnight means yesterday at 23:50.
+Times in the future, or before the previous entry, are rejected.
+
+### revert
+
+Deletes the last entry, i.e., undoes the last `start` or `stop`, after showing it and asking for confirmation.
+Reverting a start discards the running session; reverting a stop lets the session run again.
+
+```shell
+$ work revert
+Delete "stop 2026-10-11T18:30:00+02:00"? [y/N] y
+```
+
+Use `--yes` to skip the question.
+
+### until
+
+Shows how much is left to reach a goal (default: `6h`) today, and when you will reach it.
+Use `--since` to count a different duration back from now instead of today.
+
+```shell
+work until --goal 8h
+work until --goal 40h --since 7d
+```
+
+### report
+
+Shows the working hours per day of the last 7 days.
 Use `--by week` or `--by month` for other periods and `--last <n>` for more or fewer periods.
 
 ```shell
@@ -60,32 +101,46 @@ $ work report --by week --last 2
   total: 6 hours, 30 minutes
 ```
 
+### focus
+
+Starts tracking, counts down a goal (default: `6h`), and stops tracking with a beep when the goal is reached.
+Press `Ctrl-C` to stop early.
+
+```shell
+work focus --goal 25m
+```
+
+### awake
+
+Prints when your machine woke up from sleep, or booted if it has not slept since.
+Handy if you forgot to start and don't know when: `work start --at awake`.
+
+```shell
+$ work awake
+2026-10-11T08:42:13+02:00
+```
+
+### edit
+
+Opens the working hours file in your editor (see [Configuration](#configuration)).
+
+### cat
+
+Prints the working hours file.
+
+### drop
+
+Deletes the working hours file after asking for confirmation.
+Use `--yes` to skip the question.
+
+### date
+
+Prints the current date in the format of the working hours file.
+
 ## Output
 
 Commands print YAML by default.
 Use `-o json` or `-o csv` (`--output`) for further processing, e.g., `work report -o csv > hours.csv`.
-
-## Correcting Times
-
-Forgot to start or stop? Pass the time it actually happened.
-
-```shell
-work start --at 09:15
-work stop --at 2026-10-11T18:30:00+02:00
-```
-
-Forgot to start and don't know when? Start when your machine woke up from sleep, or booted if it has not slept since.
-
-```shell
-work start --at awake
-work awake  # just print that time
-```
-
-`HH:mm` means the most recent such time, so `work stop --at 23:50` right after midnight means yesterday at 23:50.
-Times in the future, or before the previous entry, are rejected.
-
-Started or stopped by accident? `work revert` deletes the last entry after showing it and asking for confirmation (`--yes` skips the question).
-Reverting a start discards the running session; reverting a stop lets the session run again.
 
 ## Marks
 
