@@ -77,7 +77,7 @@ program
 
 program
     .command('edit')
-    .description('open the working hours file in VS Code')
+    .description('open the working hours file in an editor')
     .option('--file [string]', `the working hours file`)
     .action(
         hae(async options => {
