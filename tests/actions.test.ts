@@ -1,13 +1,13 @@
 import yaml from 'js-yaml'
 import * as path from 'node:path'
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, MockInstance, vi} from 'vitest'
 import actions from '../src/actions'
 import * as repository from '../src/repository'
 import {now, read, tmpdir, write} from './helpers'
 
 let file: string
-let log: ReturnType<typeof vi.spyOn>
-let sigint: ReturnType<typeof process.listeners>
+let log: MockInstance<typeof console.log>
+let sigint: NodeJS.SignalsListener[]
 
 beforeEach(async () => {
     file = path.join(await tmpdir(), 'work.log')
@@ -20,7 +20,7 @@ beforeEach(async () => {
 
 afterEach(() => {
     for (const listener of process.listeners('SIGINT')) {
-        if (!sigint.includes(listener)) process.removeListener('SIGINT', listener as any)
+        if (!sigint.includes(listener)) process.removeListener('SIGINT', listener)
     }
     vi.useRealTimers()
     vi.restoreAllMocks()

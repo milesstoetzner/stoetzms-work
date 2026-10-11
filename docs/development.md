@@ -34,6 +34,18 @@ For fixing lint errors ...
 yarn lint:fix
 ```
 
+For checking types ...
+
+```shell
+yarn types:check
+```
+
+For running the tests ...
+
+```shell
+yarn test
+```
+
 For checking the code style ...
 
 ```shell

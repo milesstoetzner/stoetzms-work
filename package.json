@@ -20,6 +20,7 @@
     "scripts": {
         "work": "tsx src/index.ts",
         "test": "vitest run",
+        "types:check": "tsc --noEmit",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
         "style:check": "prettier --check .",

@@ -50,6 +50,9 @@ jobs:
             - name: (TEST) Check Prettier
               run: yarn style:check
 
+            - name: (TEST) Check Types
+              run: yarn types:check
+
             - name: (TEST) Run Tests
               run: yarn test
 

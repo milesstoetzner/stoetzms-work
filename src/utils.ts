@@ -32,7 +32,7 @@ export function humanize(duration: moment.Duration) {
 
 export function numerize(duration: string): number {
     const data = parseDuration(duration)
-    if (!Number.isInteger(data)) throw new Error(`"${duration}" cannot be parsed as duration`)
+    if (data === null || !Number.isInteger(data)) throw new Error(`"${duration}" cannot be parsed as duration`)
     return data
 }
 
