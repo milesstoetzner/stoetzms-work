@@ -1,11 +1,14 @@
+import moment from 'moment'
 import * as path from 'node:path'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import actions from '../src/actions'
 import * as repository from '../src/repository'
 import * as utils from '../src/utils'
+import * as system from '../src/system'
 import {now, read, tmpdir, write} from './helpers'
 
 vi.mock('../src/utils', async original => ({...(await original<typeof utils>()), confirm: vi.fn()}))
+vi.mock('../src/system', async original => ({...(await original<typeof system>()), wake: vi.fn()}))
 
 let file: string
 
@@ -44,6 +47,18 @@ describe('start', () => {
     it('starts at a given time', async () => {
         await actions.start({file, at: '09:15'})
         expect(await read(file)).toBe('start 2026-10-11T09:15:00+02:00\n')
+    })
+
+    it('starts when the machine woke up', async () => {
+        vi.mocked(system.wake).mockResolvedValue(moment('2026-10-11T08:42:00+02:00'))
+        await actions.start({file, at: 'wake'})
+        expect(await read(file)).toBe('start 2026-10-11T08:42:00+02:00\n')
+    })
+
+    it('refuses to start at wake if that is before the last stop', async () => {
+        vi.mocked(system.wake).mockResolvedValue(moment('2026-10-11T08:42:00+02:00'))
+        await write(file, ['start 2026-10-11T09:00:00+02:00', 'stop 2026-10-11T10:00:00+02:00'])
+        await expect(actions.start({file, at: 'wake'})).rejects.toThrow('Cannot start before the last stop')
     })
 
     it('returns the status as of the given time', async () => {
