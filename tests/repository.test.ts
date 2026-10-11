@@ -108,4 +108,24 @@ describe('repository', () => {
         expect(repository.resolve('/tmp/~/work.log')).toBe('/tmp/~/work.log')
         expect(repository.resolve('work.log')).toBe('work.log')
     })
+
+    describe('locate', () => {
+        it('keeps --file without a mark', () => {
+            expect(repository.locate()).toBeUndefined()
+            expect(repository.locate('/tmp/work.log')).toBe('/tmp/work.log')
+        })
+
+        it('appends the mark to the default file', () => {
+            expect(repository.locate(undefined, 'project')).toBe(path.join(os.homedir(), 'stoetzms-work-project.log'))
+        })
+
+        it('rejects --file together with --mark', () => {
+            expect(() => repository.locate('/tmp/work.log', 'project')).toThrow('Use either --file or --mark')
+        })
+
+        it('rejects marks that are not plain names', () => {
+            expect(() => repository.locate(undefined, '../etc')).toThrow('"../etc" is not a valid mark')
+            expect(() => repository.locate(undefined, '')).toThrow('"" is not a valid mark')
+        })
+    })
 })
