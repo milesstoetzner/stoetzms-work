@@ -20,6 +20,7 @@
     "scripts": {
         "work": "tsx src/index.ts",
         "test": "vitest run",
+        "test:cli": "vitest run tests/cli",
         "types:check": "tsc --noEmit",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
