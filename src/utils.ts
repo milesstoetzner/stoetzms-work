@@ -2,6 +2,7 @@ import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import parseDuration from 'parse-duration'
 import yaml from 'js-yaml'
+import * as readline from 'node:readline/promises'
 
 export function hae<T>(action: (options: T) => Promise<any>): (options: T) => Promise<void> {
     return async (options: T) => {
@@ -64,4 +65,24 @@ export function print(data: unknown) {
     if (data === undefined) return
     if (typeof data === 'string') return console.log(data)
     console.log(yaml.dump(data))
+}
+
+/**
+ * Asks a yes/no question. Anything but "y" or "yes", including closed input, is a no.
+ */
+export async function confirm(
+    question: string,
+    input: NodeJS.ReadableStream = process.stdin,
+    output: NodeJS.WritableStream = process.stdout
+) {
+    const rl = readline.createInterface({input, output})
+    try {
+        const answer = await new Promise<string>(resolve => {
+            rl.on('close', () => resolve(''))
+            rl.question(question).then(resolve, () => resolve(''))
+        })
+        return /^y(es)?$/i.test(answer.trim())
+    } finally {
+        rl.close()
+    }
 }

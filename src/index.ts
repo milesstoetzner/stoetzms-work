@@ -5,6 +5,7 @@ import actions from './actions'
 import * as utils from './utils'
 import {hae, print} from './utils'
 import * as version from './version'
+import * as repository from './repository'
 import yaml from 'js-yaml'
 
 const program = new Command()
@@ -99,9 +100,12 @@ program
     .command('drop')
     .description('drop the working hours file')
     .option('--file [string]', `the working hours file`)
-    .requiredOption('--dangerous', '', false)
+    .option('-y, --yes', 'do not ask for confirmation', false)
     .action(
         hae(async options => {
+            const file = repository.resolve(options.file)
+            if (!(await repository.exists(file))) return
+            if (!options.yes && !(await utils.confirm(`Delete ${file}? [y/N] `))) throw new Error('Aborted')
             await actions.drop(options)
         })
     )

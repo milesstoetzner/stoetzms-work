@@ -161,15 +161,9 @@ describe('focus', () => {
 })
 
 describe('drop', () => {
-    it('requires --dangerous', async () => {
-        await write(file, ['start 2026-10-11T08:00:00+02:00'])
-        await expect(actions.drop({file, dangerous: false})).rejects.toThrow('Dangerous')
-        expect(await repository.exists(file)).toBe(true)
-    })
-
     it('deletes the file', async () => {
         await write(file, ['start 2026-10-11T08:00:00+02:00'])
-        await actions.drop({file, dangerous: true})
+        await actions.drop({file})
         expect(await repository.exists(file)).toBe(false)
     })
 })
