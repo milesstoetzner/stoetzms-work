@@ -1,25 +1,36 @@
 import * as fs from 'node:fs/promises'
+import * as os from 'node:os'
+import * as path from 'node:path'
 import moment from 'moment'
 import {execSync} from 'node:child_process'
 
 export const START = 'start'
 export const STOP = 'stop'
-export const FILE_DEFAULT = '~/stoetzms-work.log'
+export const FILE_DEFAULT = path.join(os.homedir(), 'stoetzms-work.log')
 
 export type Entry = {
     type: string
     date: moment.Moment
 }
 
+/**
+ * Expands a leading "~", since only the shell does that and not for "--file=~/...".
+ */
+export function resolve(file = FILE_DEFAULT) {
+    if (file === '~') return os.homedir()
+    if (file.startsWith('~/') || file.startsWith('~' + path.sep)) return path.join(os.homedir(), file.slice(2))
+    return file
+}
+
 export async function exists(file = FILE_DEFAULT) {
     return await fs
-        .access(file)
+        .access(resolve(file))
         .then(() => true)
         .catch(() => false)
 }
 
 export async function raw(file = FILE_DEFAULT) {
-    if (await exists(file)) return (await fs.readFile(file)).toString()
+    if (await exists(file)) return (await fs.readFile(resolve(file))).toString()
     return ''
 }
 
@@ -51,13 +62,13 @@ export async function load(file = FILE_DEFAULT) {
 }
 
 export async function add(type: string, file = FILE_DEFAULT) {
-    await fs.appendFile(file, type + ' ' + moment().format() + '\n')
+    await fs.appendFile(resolve(file), type + ' ' + moment().format() + '\n')
 }
 
 export function edit(file = FILE_DEFAULT) {
-    execSync('code ' + file)
+    execSync('code ' + resolve(file))
 }
 
 export async function drop(file = FILE_DEFAULT) {
-    if (await exists(file)) await fs.unlink(file)
+    if (await exists(file)) await fs.unlink(resolve(file))
 }

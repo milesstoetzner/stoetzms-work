@@ -70,8 +70,13 @@ describe('repository', () => {
         await repository.drop(file)
     })
 
-    // BUG: node does not expand "~", so the default resolves to "./~/stoetzms-work.log" relative to the cwd.
-    it.fails('defaults to a file in the home directory', () => {
-        expect(path.resolve(repository.FILE_DEFAULT)).toBe(path.join(os.homedir(), 'stoetzms-work.log'))
+    it('defaults to a file in the home directory', () => {
+        expect(repository.resolve()).toBe(path.join(os.homedir(), 'stoetzms-work.log'))
+    })
+
+    it('expands a leading tilde', () => {
+        expect(repository.resolve('~/work.log')).toBe(path.join(os.homedir(), 'work.log'))
+        expect(repository.resolve('/tmp/~/work.log')).toBe('/tmp/~/work.log')
+        expect(repository.resolve('work.log')).toBe('work.log')
     })
 })
