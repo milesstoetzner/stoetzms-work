@@ -19,6 +19,7 @@
     "license": "Apache-2.0",
     "scripts": {
         "work": "tsx src/index.ts",
+        "test": "vitest run",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
         "style:check": "prettier --check .",
@@ -57,6 +58,7 @@
         "tsx": "^4.19.4",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.33.1",
-        "vitepress": "^1.6.3"
+        "vitepress": "^1.6.3",
+        "vitest": "^3.2.4"
     }
 }
