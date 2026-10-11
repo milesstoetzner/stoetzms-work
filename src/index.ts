@@ -5,6 +5,7 @@ import actions from './actions'
 import * as utils from './utils'
 import {hae} from './utils'
 import * as version from './version'
+import * as repository from './repository'
 
 const program = new Command()
 
@@ -16,10 +17,20 @@ function print(data: unknown) {
     utils.print(data, program.opts().output)
 }
 
+// Translates --mark into --file before any action runs
+program.hook(
+    'preAction',
+    hae(async (_: Command, command: Command) => {
+        const options = command.opts()
+        if (options.mark !== undefined) command.setOptionValue('file', repository.locate(options.file, options.mark))
+    })
+)
+
 program
     .command('status')
     .description('get the current working status')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .action(
         hae(async options => {
             print(await actions.status(options))
@@ -30,6 +41,7 @@ program
     .command('start')
     .description('start tracking')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('--at [string]', 'start at "HH:mm" or an ISO 8601 date instead of now')
     .action(
         hae(async options => {
@@ -41,6 +53,7 @@ program
     .command('stop')
     .description('stop tracking')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('--at [string]', 'stop at "HH:mm" or an ISO 8601 date instead of now')
     .action(
         hae(async options => {
@@ -52,6 +65,7 @@ program
     .command('revert')
     .description('delete the last entry, i.e., undo the last start or stop')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('-y, --yes', 'do not ask for confirmation', false)
     .action(
         hae(async options => {
@@ -63,6 +77,7 @@ program
     .command('until')
     .description('until goal reached')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('--goal [string]', 'the duration to work', '6h')
     .option('--since [string]', 'the duration since when to achieve the goal (default: today)')
     .action(
@@ -75,6 +90,7 @@ program
     .command('report')
     .description('report the working hours per period')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('--by [string]', 'the period (day, week, month)', 'day')
     .option('--last [number]', 'the number of periods', '7')
     .action(
@@ -87,6 +103,7 @@ program
     .command('focus')
     .description('focus')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('--goal [string]', 'the duration to work', '6h')
     .action(
         hae(async options => {
@@ -109,6 +126,7 @@ program
     .command('edit')
     .description('open the working hours file in an editor')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .action(
         hae(async options => {
             await actions.edit(options)
@@ -119,6 +137,7 @@ program
     .command('cat')
     .description('cat the working hours file')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .action(
         hae(async options => {
             print(await actions.cat(options))
@@ -129,6 +148,7 @@ program
     .command('drop')
     .description('drop the working hours file')
     .option('--file [string]', `the working hours file`)
+    .option('--mark <name>', 'use the working hours file of this mark, e.g., a project')
     .option('-y, --yes', 'do not ask for confirmation', false)
     .action(
         hae(async options => {
@@ -145,4 +165,4 @@ program
         })
     )
 
-program.parse()
+program.parseAsync()

@@ -25,6 +25,18 @@ export function resolve(file?: string) {
     return file
 }
 
+/**
+ * The file of a mark is the default file with "-<mark>" appended to its name, e.g., "~/stoetzms-work-project.log".
+ */
+export function locate(file?: string, mark?: string) {
+    if (mark === undefined) return file
+    if (file !== undefined) throw new Error('Use either --file or --mark')
+    if (!/^[\w-]+$/.test(mark)) throw new Error(`"${mark}" is not a valid mark (letters, digits, "_" and "-")`)
+
+    const {dir, name, ext} = path.parse(resolve())
+    return path.join(dir, `${name}-${mark}${ext}`)
+}
+
 export async function exists(file?: string) {
     return await fs
         .access(resolve(file))

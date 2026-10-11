@@ -78,6 +78,19 @@ Times in the future, or before the previous entry, are rejected.
 Started or stopped by accident? `work revert` deletes the last entry after showing it and asking for confirmation (`--yes` skips the question).
 Reverting a start discards the running session; reverting a stop lets the session run again.
 
+## Marks
+
+To track something separately, e.g., a project, pass a mark to any command.
+Each mark has its own working hours file next to the default one, e.g., `~/stoetzms-work-acme.log`.
+
+```shell
+work start --mark acme
+work status --mark acme
+work stop --mark acme
+```
+
+A mark consists of letters, digits, `_` and `-`, and cannot be combined with `--file`.
+
 ## Configuration
 
 The working hours are stored in `~/stoetzms-work.log` unless `--file` is given.

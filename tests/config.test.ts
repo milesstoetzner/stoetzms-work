@@ -63,6 +63,11 @@ describe('file', () => {
         expect(repository.resolve()).toBe(path.join(os.homedir(), 'work.log'))
     })
 
+    it('is the base for marks', async () => {
+        await write(location, ['file: ~/work/hours.log'])
+        expect(repository.locate(undefined, 'project')).toBe(path.join(os.homedir(), 'work', 'hours-project.log'))
+    })
+
     it('is overridden by --file', async () => {
         await write(location, ['file: ~/work.log'])
         expect(repository.resolve('/tmp/other.log')).toBe('/tmp/other.log')

@@ -121,7 +121,7 @@ describe('hae', () => {
         vi.stubEnv('DEBUG', undefined)
         await utils.hae(async () => {
             throw new Error('Already started ...')
-        })({})
+        })()
         expect(error).toHaveBeenCalledWith('Error: Already started ...')
         expect(process.exit).toHaveBeenCalledWith(1)
     })
@@ -131,12 +131,12 @@ describe('hae', () => {
         const e = new Error('Already started ...')
         await utils.hae(async () => {
             throw e
-        })({})
+        })()
         expect(error).toHaveBeenCalledWith(e)
     })
 
     it('does nothing on success', async () => {
-        await utils.hae(async () => {})({})
+        await utils.hae(async () => {})()
         expect(error).not.toHaveBeenCalled()
         expect(process.exit).not.toHaveBeenCalled()
     })

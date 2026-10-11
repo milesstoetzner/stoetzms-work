@@ -7,10 +7,10 @@ import * as readline from 'node:readline/promises'
 /**
  * Handles errors of an action: prints the message to stderr (with stack trace if DEBUG is set) and exits with 1.
  */
-export function hae<T>(action: (options: T) => Promise<any>): (options: T) => Promise<void> {
-    return async (options: T) => {
+export function hae<A extends unknown[]>(action: (...args: A) => Promise<any>): (...args: A) => Promise<void> {
+    return async (...args: A) => {
         try {
-            await action(options)
+            await action(...args)
         } catch (e) {
             console.error(process.env.DEBUG ? e : `Error: ${e instanceof Error ? e.message : e}`)
             process.exit(1)
