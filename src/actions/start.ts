@@ -1,6 +1,7 @@
 import * as repository from '../repository'
 import * as utils from '../utils'
 import * as query from '../query'
+import * as system from '../system'
 
 export type StartOptions = {
     file?: string
@@ -8,10 +9,10 @@ export type StartOptions = {
 }
 
 /**
- * Starts tracking (now or at the given time) and returns the status right before.
+ * Starts tracking (now, at the given time, or when this machine woke up) and returns the status right before.
  */
 export default async function (options: StartOptions) {
-    const at = utils.time(options.at)
+    const at = options.at === 'awake' ? await system.awake() : utils.time(options.at)
     const entries = await repository.load(options.file)
 
     const latest = utils.last(entries)
