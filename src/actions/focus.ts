@@ -9,6 +9,8 @@ export type FocusOptions = {
 }
 
 export default async function (options: FocusOptions) {
+    const goalDuration = moment.duration(utils.numerize(options.goal))
+
     await actions.start(options)
 
     process.on('SIGINT', async () => {
@@ -16,7 +18,6 @@ export default async function (options: FocusOptions) {
         process.exit()
     })
 
-    const goalDuration = moment.duration(utils.numerize(options.goal))
     const untilTime = moment().add(goalDuration)
 
     process.stdout.write(

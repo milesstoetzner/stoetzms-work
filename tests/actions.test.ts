@@ -132,8 +132,7 @@ describe('focus', () => {
         await expect(actions.focus({file, goal: 'banana'})).rejects.toThrow('cannot be parsed')
     })
 
-    // BUG: the goal is parsed after tracking started, so an invalid goal leaves a dangling session.
-    it.fails('does not start tracking when the goal is invalid', async () => {
+    it('does not start tracking when the goal is invalid', async () => {
         await actions.focus({file, goal: 'banana'}).catch(() => {})
         expect(await repository.load(file)).toEqual([])
     })
