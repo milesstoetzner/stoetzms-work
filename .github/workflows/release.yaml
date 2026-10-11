@@ -30,9 +30,9 @@ jobs:
                   git config --global user.email "${GITHUB_ACTOR}@users.noreply.${GITHUB_DOMAIN:-"github.com"}"
 
             - name: (PREPARE) Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v6
               with:
-                  node-version: 22.0.0
+                  node-version-file: .nvmrc
                   cache: yarn
 
             - name: (PREPARE) Install Dependencies
