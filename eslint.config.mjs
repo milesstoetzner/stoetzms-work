@@ -16,6 +16,7 @@ export default tseslint.config(
         },
     },
     {
-        ignores: ['dist'],
+        // build output, also listed in .gitignore
+        ignores: ['dist', 'docs/.vitepress/dist', 'docs/.vitepress/cache'],
     }
 )
