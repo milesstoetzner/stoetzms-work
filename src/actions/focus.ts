@@ -12,7 +12,7 @@ export default async function (options: FocusOptions) {
     await actions.start(options)
 
     process.on('SIGINT', async () => {
-        await actions.stop({...options, grace: true})
+        await actions.stop(options)
         process.exit()
     })
 
