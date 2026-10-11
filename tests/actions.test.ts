@@ -228,6 +228,27 @@ describe('until', () => {
     })
 })
 
+describe('report', () => {
+    it('reports per day', async () => {
+        await write(file, ['start 2026-10-10T08:00:00+02:00', 'stop 2026-10-10T10:00:00+02:00'])
+        expect(await actions.report({file, by: 'day', last: '2'})).toEqual([
+            {period: '2026-10-10', hours: 2, total: '2 hours'},
+            {period: '2026-10-11', hours: 0, total: '0 seconds'},
+        ])
+    })
+
+    it('rejects an unknown period', async () => {
+        await expect(actions.report({file, by: 'year', last: '2'})).rejects.toThrow(
+            '"year" is not one of day, week, month'
+        )
+    })
+
+    it('rejects an invalid number of periods', async () => {
+        await expect(actions.report({file, by: 'day', last: '0'})).rejects.toThrow('"0" is not a positive integer')
+        await expect(actions.report({file, by: 'day', last: 'all'})).rejects.toThrow('"all" is not a positive integer')
+    })
+})
+
 describe('focus', () => {
     it('tracks until the goal is reached', async () => {
         const ticks: number[] = []

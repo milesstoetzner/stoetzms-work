@@ -200,3 +200,44 @@ describe('since', () => {
         expect(hours(query.since(entries, moment().subtract(8, 'hours')))).toBe(7)
     })
 })
+
+describe('report', () => {
+    const entries = [
+        ...session('2026-09-28T08:00:00+02:00', '2026-09-28T10:00:00+02:00'),
+        ...session('2026-10-09T22:00:00+02:00', '2026-10-10T01:00:00+02:00'),
+        ...session('2026-10-10T08:00:00+02:00', '2026-10-10T09:30:00+02:00'),
+        ...session('2026-10-11T11:00:00+02:00'),
+    ]
+
+    it('reports per day, oldest first, including empty days', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.report(entries, 'day', 3)).toEqual([
+            {period: '2026-10-09', hours: 2, total: '2 hours'},
+            {period: '2026-10-10', hours: 2.5, total: '2 hours, 30 minutes'},
+            {period: '2026-10-11', hours: 1, total: '1 hour'},
+        ])
+    })
+
+    it('reports per ISO week starting on Monday', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.report(entries, 'week', 3)).toEqual([
+            {period: '2026-W39', hours: 0, total: '0 seconds'},
+            {period: '2026-W40', hours: 2, total: '2 hours'},
+            {period: '2026-W41', hours: 5.5, total: '5 hours, 30 minutes'},
+        ])
+    })
+
+    it('reports per month', () => {
+        now('2026-10-11T12:00:00+02:00')
+        expect(query.report(entries, 'month', 2)).toEqual([
+            {period: '2026-09', hours: 2, total: '2 hours'},
+            {period: '2026-10', hours: 5.5, total: '5 hours, 30 minutes'},
+        ])
+    })
+
+    it('splits days at midnight across a DST switch', () => {
+        now('2026-10-26T12:00:00+01:00')
+        const dst = session('2026-10-24T23:00:00+02:00', '2026-10-25T04:00:00+01:00')
+        expect(query.report(dst, 'day', 3).map(row => row.hours)).toEqual([1, 5, 0])
+    })
+})

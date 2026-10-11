@@ -141,3 +141,18 @@ describe('hae', () => {
         expect(process.exit).not.toHaveBeenCalled()
     })
 })
+
+describe('csv', () => {
+    it('renders a header and rows', () => {
+        expect(
+            utils.csv([
+                {period: '2026-10-10', hours: 2},
+                {period: '2026-10-11', hours: 0.5},
+            ])
+        ).toBe('period,hours\n2026-10-10,2\n2026-10-11,0.5')
+    })
+
+    it('is empty without rows', () => {
+        expect(utils.csv([])).toBe('')
+    })
+})

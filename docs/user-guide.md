@@ -31,12 +31,25 @@ Commands:
   stop [options]    stop tracking
   revert [options]  delete the last entry, i.e., undo the last start or stop
   until [options]   until goal reached
+  report [options]  report the working hours per period
   focus [options]   focus
   edit [options]    open the working hours file in an editor
   cat [options]     cat the working hours file
   drop [options]    drop the working hours file
   date [options]    get current date
   help [command]    display help for command
+```
+
+## Reports
+
+`work report` shows the working hours per day of the last 7 days.
+Use `--by week` or `--by month` for other periods, `--last <n>` for more or fewer periods, and `--format json` or `--format csv` for further processing.
+
+```shell
+$ work report --by week --last 3
+2026-W39: 31 hours, 20 minutes
+2026-W40: 28 hours, 5 minutes
+2026-W41: 6 hours, 30 minutes
 ```
 
 ## Correcting Times

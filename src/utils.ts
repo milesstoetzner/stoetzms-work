@@ -110,3 +110,9 @@ export async function confirm(
         rl.close()
     }
 }
+
+export function csv(rows: Record<string, unknown>[]) {
+    if (!rows.length) return ''
+    const keys = Object.keys(rows[0])
+    return [keys.join(','), ...rows.map(row => keys.map(key => String(row[key])).join(','))].join('\n')
+}

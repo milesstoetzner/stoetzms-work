@@ -67,6 +67,23 @@ program
     )
 
 program
+    .command('report')
+    .description('report the working hours per period')
+    .option('--file [string]', `the working hours file`)
+    .option('--by [string]', 'the period (day, week, month)', 'day')
+    .option('--last [number]', 'the number of periods', '7')
+    .option('--format [string]', 'the output format (yaml, json, csv)', 'yaml')
+    .action(
+        hae(async options => {
+            const rows = await actions.report(options)
+            if (options.format === 'yaml') return print(Object.fromEntries(rows.map(row => [row.period, row.total])))
+            if (options.format === 'json') return print(JSON.stringify(rows, null, 4))
+            if (options.format === 'csv') return print(utils.csv(rows))
+            throw new Error(`"${options.format}" is not one of yaml, json, csv`)
+        })
+    )
+
+program
     .command('focus')
     .description('focus')
     .option('--file [string]', `the working hours file`)
