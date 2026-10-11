@@ -99,7 +99,7 @@ program
     .command('drop')
     .description('drop the working hours file')
     .option('--file [string]', `the working hours file`)
-    .requiredOption('--dangerous', '', false)
+    .option('-y, --yes', 'do not ask for confirmation', false)
     .action(
         hae(async options => {
             await actions.drop(options)

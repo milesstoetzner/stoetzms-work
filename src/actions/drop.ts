@@ -1,11 +1,17 @@
 import * as repository from '../repository'
+import * as utils from '../utils'
 
 export type DropOptions = {
     file?: string
-    dangerous: boolean
+    yes?: boolean
 }
 
+/**
+ * Deletes the working hours file after asking for confirmation, unless yes is set.
+ */
 export default async function (options: DropOptions) {
-    if (!options.dangerous) throw new Error('Dangerous operation ...')
-    await repository.drop(options.file)
+    const file = repository.resolve(options.file)
+    if (!(await repository.exists(file))) return
+    if (!options.yes && !(await utils.confirm(`Delete ${file}? [y/N] `))) throw new Error('Aborted')
+    await repository.drop(file)
 }

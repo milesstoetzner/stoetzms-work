@@ -1,4 +1,5 @@
 import moment from 'moment'
+import {PassThrough} from 'node:stream'
 import {describe, expect, it} from 'vitest'
 import * as utils from '../src/utils'
 
@@ -35,5 +36,32 @@ describe('utils', () => {
 
     it('humanize does not roll over to days', () => {
         expect(utils.humanize(moment.duration(30, 'hours'))).toBe('30 hours')
+    })
+})
+
+describe('confirm', () => {
+    async function ask(...lines: string[]) {
+        const input = new PassThrough()
+        const output = new PassThrough()
+        const answer = utils.confirm('Sure? ', input, output)
+        for (const line of lines) input.write(line + '\n')
+        input.end()
+        return await answer
+    }
+
+    it('accepts y and yes', async () => {
+        expect(await ask('y')).toBe(true)
+        expect(await ask('YES')).toBe(true)
+        expect(await ask(' yes ')).toBe(true)
+    })
+
+    it('rejects everything else', async () => {
+        expect(await ask('n')).toBe(false)
+        expect(await ask('')).toBe(false)
+        expect(await ask('yep')).toBe(false)
+    })
+
+    it('rejects closed input', async () => {
+        expect(await ask()).toBe(false)
     })
 })
