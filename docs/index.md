@@ -4,7 +4,7 @@ layout: home
 
 hero:
     name: 'work.stoetz.ms'
-    text: 'A simple utility for tracking working hours.'
+    text: 'A utility for tracking working hours.'
     image:
         src: /hero.png
     actions:
@@ -17,7 +17,7 @@ hero:
 
 features:
     - icon: 🕒
-      title: Simple Time Logging
+      title: Time Logging
       details: Start and stop tracking with a single command. No menus, no mouse, just the terminal.
 
     - icon: 🔒

@@ -3,7 +3,7 @@ import {defineConfig} from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     title: 'work.stoetz.ms',
-    description: 'A simple utility for tracking working hours.',
+    description: 'A utility for tracking working hours.',
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
         nav: [
