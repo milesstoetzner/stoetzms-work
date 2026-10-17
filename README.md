@@ -1,4 +1,4 @@
 # Work
 
-A simple utility for tracking working hours.
+A utility for tracking working hours.
 Please check out our [repository](https://github.com/milesstoetzner/stoetzms-work).

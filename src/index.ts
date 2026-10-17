@@ -9,7 +9,7 @@ import * as repository from './repository'
 
 const program = new Command()
 
-program.name('work').description('A simple utility for tracking working hours.').version(version.VERSION)
+program.name('work').description('A utility for tracking working hours.').version(version.VERSION)
 
 program.addOption(new Option('-o, --output <format>', 'the output format').choices(utils.OUTPUTS).default('yaml'))
 
